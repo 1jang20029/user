@@ -4,837 +4,1025 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <title>연성이의 포트폴리오</title>
+    <title>YeonSeong의 개인 공간</title>
     <style>
-        *{margin: 0; padding: 0; box-sizing: border-box;}
-        body {
-            font-family: 'Arial', sans-serif;
+        * {
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
+            box-sizing: border-box;
         }
 
-        /* 헤더 스타일 */
-        header {
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            padding: 1em;
-        }
-
-        /* 네비게이션 */
-        nav {
-            background-color: #444;
-            padding: 10px 0;
-            text-align: center;
-        }
-
-        nav button {
-            background-color: #666;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            margin: 0 10px;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
-
-        nav button:hover, nav button.active {
-            background-color: #888;
-        }
-
-        /* 페이지 컨테이너 */
-        .page {
-            display: none;
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .page.active {
-            display: block;
-        }
-
-        /* About Me 스타일 */
-        .about-content {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .about-content img {
-            max-width: 40%;
-            border-radius: 10px;
-        }
-
-        .about-text {
-            flex: 1;
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #fafafa;
+            color: #2d3748;
             line-height: 1.6;
         }
 
-        /* 포트폴리오 갤러리 */
-        .gallery {
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid #e2e8f0;
+            padding: 1rem 0;
+        }
+
+        .nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
             display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
             justify-content: space-between;
+            align-items: center;
         }
 
-        .project {
-            flex: 1 0 calc(33.333% - 20px);
-            box-sizing: border-box;
-            overflow: hidden;
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #4a5568;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-link {
+            color: #718096;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
             border-radius: 8px;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease-in-out;
-            cursor: pointer;
+            transition: all 0.3s ease;
         }
 
-        .project:hover {
-            transform: scale(1.05);
+        .nav-link:hover,
+        .nav-link.active {
+            color: #4299e1;
+            background: #ebf8ff;
         }
 
-        .project img {
-            width: 100%;
-            height: auto;
-            border-radius: 8px 8px 0 0;
+        /* Main content */
+        .main {
+            margin-top: 80px;
+            min-height: calc(100vh - 80px);
         }
 
-        .project .info {
-            padding: 10px;
-            background-color: white;
+        .section {
+            display: none;
+            padding: 3rem 2rem;
         }
 
-        /* 영화 소개 스타일 */
+        .section.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Home section */
+        .hero {
+            text-align: center;
+            padding: 5rem 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 20px;
+            margin: 2rem 0;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        .intro-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .intro-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .intro-card h3 {
+            color: #2d3748;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .intro-card p {
+            color: #718096;
+            line-height: 1.6;
+        }
+
+        /* Travel section */
+        .travel-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .travel-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .travel-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .travel-image {
+            height: 200px;
+            background: linear-gradient(45deg, #ff9a9e, #fecfef);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+
+        .travel-content {
+            padding: 1.5rem;
+        }
+
+        .travel-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #2d3748;
+        }
+
+        .travel-date {
+            color: #4299e1;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .travel-description {
+            color: #718096;
+            line-height: 1.6;
+        }
+
+        /* Recipe section */
+        .recipe-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .recipe-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            border-left: 4px solid #48bb78;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .recipe-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .recipe-time {
+            color: #48bb78;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .recipe-ingredients {
+            margin-bottom: 1rem;
+        }
+
+        .recipe-ingredients h4 {
+            font-size: 1rem;
+            color: #4a5568;
+            margin-bottom: 0.5rem;
+        }
+
+        .ingredient-list {
+            list-style: none;
+            padding-left: 1rem;
+        }
+
+        .ingredient-list li {
+            color: #718096;
+            margin-bottom: 0.25rem;
+            position: relative;
+        }
+
+        .ingredient-list li::before {
+            content: '•';
+            color: #48bb78;
+            position: absolute;
+            left: -1rem;
+        }
+
+        /* Books section */
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .book-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+            position: relative;
+        }
+
+        .book-cover {
+            width: 80px;
+            height: 120px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+        }
+
+        .book-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .book-author {
+            color: #4299e1;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .book-review {
+            color: #718096;
+            line-height: 1.6;
+            font-style: italic;
+        }
+
+        .rating {
+            margin-top: 1rem;
+            color: #fbbf24;
+        }
+
+        /* Fitness section */
+        .fitness-dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .fitness-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .fitness-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #48bb78, #38a169);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            margin: 0 auto 1rem;
+        }
+
+        .fitness-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .fitness-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #48bb78;
+            margin-bottom: 0.5rem;
+        }
+
+        .fitness-unit {
+            color: #718096;
+            font-size: 0.9rem;
+        }
+
+        .workout-log {
+            background: #f7fafc;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .workout-entry {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .workout-name {
+            font-weight: 500;
+            color: #2d3748;
+        }
+
+        .workout-duration {
+            color: #48bb78;
+            font-size: 0.9rem;
+        }
+
+        /* Section titles */
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 1rem;
+            color: #2d3748;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: #718096;
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Movie list styles */
         .movie-list {
             display: flex;
             flex-wrap: wrap;
-            justify-content: space-between;
-            gap: 20px;
+            gap: 2rem;
+            justify-content: center;
+            margin-top: 2rem;
         }
 
         .movie-item {
-            width: calc(50% - 10px);
-            cursor: pointer;
-            transition: transform 0.3s ease-in-out;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            overflow: hidden;
             background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            max-width: 500px;
+            width: 100%;
+            border: 1px solid #e2e8f0;
         }
 
         .movie-item:hover {
-            transform: scale(1.02);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
         }
 
-        .movie-item img {
-            width: 100%;
+        .movie-poster {
             height: 200px;
-            object-fit: cover;
-        }
-
-        .movie-item h3 {
-            padding: 10px;
-            margin: 0;
-        }
-
-        .movie-item p {
-            padding: 0 10px 10px;
-            line-height: 1.4;
-            font-size: 14px;
-        }
-
-        .icon-link {
-            display: block;
-            text-align: center;
-            padding: 10px;
-            background-color: #f0f0f0;
-            text-decoration: none;
-            color: #333;
-            transition: background-color 0.3s;
-        }
-
-        .icon-link:hover {
-            background-color: #e0e0e0;
-        }
-
-        /* 앨범 스타일 */
-        .album-container {
-            position: relative;
-            width: 500px;
-            height: 250px;
-            margin: 20px auto;
-            border: 2px solid #333;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .photo-container {
-            position: relative;
-            width: 100%;
-            height: 100%;
-        }
-
-        .photo-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            position: absolute;
-            left: 0;
-            top: 0;
-            opacity: 0;
-            transition: opacity 0.5s ease-in-out;
-        }
-
-        .photo-container img.active {
-            opacity: 1;
-        }
-
-        .prev-btn, .next-btn {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background-color: rgba(0, 0, 0, 0.7);
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            font-size: 16px;
-            cursor: pointer;
-            border-radius: 5px;
-            z-index: 10;
-        }
-
-        .prev-btn {
-            left: 10px;
-        }
-
-        .next-btn {
-            right: 10px;
-        }
-
-        .prev-btn:hover, .next-btn:hover {
-            background-color: rgba(0, 0, 0, 0.9);
-        }
-
-        /* 뮤직 플레이어 스타일 */
-        .music-page {
-            background: linear-gradient(to bottom, #02025e, #000000);
-            color: white;
-            text-align: center;
-        }
-
-        .player h2 {
-            margin-bottom: 20px;
-            color: white;
-        }
-
-        .viewer {
-            width: 300px;
-            height: 300px;
-            margin: 0 auto 20px auto;
-        }
-
-        .viewer img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 20px;
-        }
-
-        .controls h3 {
-            width: 300px;
-            margin: 20px auto;
-            padding: 20px 0;
-            background: linear-gradient(to bottom, #f828e7, #5e68f3);
-            border-radius: 30px;
-        }
-
-        #playlist {
-            width: 300px;
-            margin: 0 auto;
-            list-style: none;
-            background: linear-gradient(to bottom, #f828e7, #5e68f3, #48f5ad);
-            border-radius: 20px;
-            padding: 20px 0;
-        }
-
-        #playlist li {
-            height: 50px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
             display: flex;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.3);
-            font-weight: bold;
-            cursor: pointer;
             align-items: center;
-            transition: background-color 0.3s;
-        }
-
-        #playlist li:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        #playlist li.playing {
-            background-color: rgba(225, 245, 5, 0.5);
-            color: black;
-        }
-
-        #playlist li img {
-            width: 50px;
-            height: 50px;
-            object-fit: cover;
-            border-radius: 5px;
-        }
-
-        #playlist li p {
-            flex: 1;
-            padding: 10px;
-            margin: 0;
-        }
-
-        .bt_con_box {
-            width: 50px;
-            position: relative;
-        }
-
-        .bt_con_box img {
-            width: 70%;
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        /* 게임 스타일 */
-        #portfolio_webgame {
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-            margin: 20px auto;
-            width: 600px;
-            height: 400px;
-            position: relative;
-            border: 2px solid #333;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        #myCanvas {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        #start_menu {
-            width: 600px;
-            height: 400px;
-            background-color: rgba(0, 0, 0, 0.8);
-            color: white;
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            display: flex;
-            flex-direction: column;
             justify-content: center;
-            align-items: center;
-        }
-
-        #start_menu button {
-            margin-top: 30px;
-            padding: 15px 30px;
-            font-size: 24px;
-            background-color: #007bff;
+            font-size: 4rem;
             color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
         }
 
-        #start_menu button:hover {
-            background-color: #0056b3;
+        .movie-content {
+            padding: 2rem;
         }
 
-        /* 반응형 디자인 */
-        @media only screen and (max-width: 768px) {
-            .project, .movie-item {
-                flex: 1 0 calc(100% - 20px);
-            }
+        .movie-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #2d3748;
+        }
 
-            .about-content {
+        .movie-description {
+            color: #718096;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .movie-link {
+            display: inline-block;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .movie-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .nav {
                 flex-direction: column;
-                text-align: center;
+                gap: 1rem;
             }
 
-            .album-container {
-                width: 90%;
-                height: 200px;
+            .nav-menu {
+                gap: 1rem;
             }
 
-            #portfolio_webgame {
-                width: 90%;
-                height: 300px;
+            .hero h1 {
+                font-size: 2rem;
             }
 
-            #myCanvas {
-                width: 100%;
-                height: 100%;
+            .hero p {
+                font-size: 1.1rem;
             }
 
-            #start_menu {
-                width: 100%;
-                height: 100%;
+            .section {
+                padding: 2rem 1rem;
+            }
+
+            .intro-grid,
+            .travel-grid,
+            .books-grid,
+            .fitness-dashboard,
+            .movie-list {
+                grid-template-columns: 1fr;
+            }
+
+            .movie-list {
+                flex-direction: column;
+                align-items: center;
             }
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>연성이의 포트폴리오</h1>
-        <p>ChatGPT로 시작하는 콘텐츠제작 프로젝트</p>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">YeonSeong's Life</div>
+            <ul class="nav-menu">
+                <li><a href="#" class="nav-link active" data-section="home">Home</a></li>
+                <li><a href="#" class="nav-link" data-section="travel">Travel</a></li>
+                <li><a href="#" class="nav-link" data-section="recipes">Recipes</a></li>
+                <li><a href="#" class="nav-link" data-section="books">Books</a></li>
+                <li><a href="#" class="nav-link" data-section="fitness">Fitness</a></li>
+                <li><a href="#" class="nav-link" data-section="thoughts">Thoughts</a></li>
+            </ul>
+        </nav>
     </header>
 
-    <nav>
-        <button onclick="showPage('about')" class="nav-btn active">About Me</button>
-        <button onclick="showPage('portfolio')" class="nav-btn">Portfolio</button>
-        <button onclick="showPage('movies')" class="nav-btn">영화 소개</button>
-        <button onclick="showPage('album')" class="nav-btn">앨범</button>
-        <button onclick="showPage('music')" class="nav-btn">음원 플레이어</button>
-        <button onclick="showPage('game')" class="nav-btn">게임</button>
-    </nav>
+    <!-- Main content -->
+    <main class="main">
+        <!-- Home section -->
+        <section id="home" class="section active">
+            <div class="container">
+                <div class="hero">
+                    <h1>안녕하세요, 연성입니다</h1>
+                    <p>
+                        일상의 소소한 기록들과 새로운 도전들을 
+                        이곳에 차곡차곡 모아가고 있어요
+                    </p>
+                </div>
 
-    <!-- About Me 페이지 -->
-    <section id="about" class="page active">
-        <h2>About Me</h2>
-        <div class="about-content">
-            <img src="https://via.placeholder.com/300x300/4CAF50/white?text=Profile" alt="Your Photo">
-            <div class="about-text">
-                <p>
-                    안녕하세요, 제 포트폴리오에 오신 것을 환영합니다. 저는 뛰어난 학업 성적과 강한 리더십으로 프로그래밍 분야에서의 성장을 꿈꾸고 있는 개발자입니다.
-                    희망 직군으로는 프로그래머로 나아가고자 합니다. 학업에서 우수한 성적을 기록함으로써 문제 해결 능력과 높은 학습 능력을 쌓았습니다. 특히, 팀프로젝트에서 팀장을 맡아 성공적으로 3개의 프로젝트를 완료했습니다.
-                </p><br>
-                <p>
-                    기술적으로는 HTML, CSS, JavaScript, Java, PHP, Node.js, SQL 등 다양한 프로그래밍 언어와 기술을 다룰 수 있습니다. 프론트엔드 개발 뿐만 아니라 백엔드 개발에도 능숙하게 참여할 수 있습니다.
-                    또한, 내성적인 성격에도 불구하고 대인 관계에 능하며 소통을 중요시 여깁니다.
+                <div class="intro-grid">
+                    <div class="intro-card">
+                        <h3>🌏 여행 기록</h3>
+                        <p>
+                            새로운 도시를 탐험하고 만난 사람들, 그리고 그 순간의 감정들을 
+                            사진과 글로 남겨두고 있어요. 작은 골목길부터 유명한 관광지까지!
+                        </p>
+                    </div>
+
+                    <div class="intro-card">
+                        <h3>👨‍🍳 요리 실험</h3>
+                        <p>
+                            집에서 새로운 레시피에 도전하는 걸 좋아해요. 
+                            성공작부터 실패작까지, 요리하며 배운 것들을 기록하고 있습니다.
+                        </p>
+                    </div>
+
+                    <div class="intro-card">
+                        <h3>📚 독서 노트</h3>
+                        <p>
+                            읽은 책들에 대한 솔직한 후기와 인상 깊었던 구절들을 모아두는 공간이에요. 
+                            다양한 장르를 넘나들며 새로운 관점을 얻고 있어요.
+                        </p>
+                    </div>
+
+                    <div class="intro-card">
+                        <h3>💪 건강 관리</h3>
+                        <p>
+                            규칙적인 운동과 건강한 습관 만들기에 도전 중이에요. 
+                            작은 변화들이 모여 큰 성과를 만드는 과정을 공유합니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Travel section -->
+        <section id="travel" class="section">
+            <div class="container">
+                <h2 class="section-title">여행 기록</h2>
+                <p class="section-subtitle">
+                    새로운 장소에서 만난 순간들과 경험들
                 </p>
-            </div>
-        </div>
-    </section>
 
-    <!-- Portfolio 페이지 -->
-    <section id="portfolio" class="page">
-        <h2>Portfolio</h2>
-        <div class="gallery">
-            <div class="project" onclick="showPage('movies')">
-                <img src="https://via.placeholder.com/300x200/FF5722/white?text=Movie+Project" alt="Project 1" id="project1-img">
-                <div class="info">
-                    <h3>Project 1<br>영화소개</h3>
-                    <p>감명깊게 본 영화 TOP10</p>
+                <div class="travel-grid">
+                    <div class="travel-card">
+                        <div class="travel-image">🏔️</div>
+                        <div class="travel-content">
+                            <h3 class="travel-title">설악산 단풍 여행</h3>
+                            <p class="travel-date">2024년 10월</p>
+                            <p class="travel-description">
+                                가을 단풍이 절정일 때 다녀온 설악산. 케이블카를 타고 올라간 권금성에서 본 풍경이 
+                                정말 장관이었어요. 새벽 일찍 출발해서 권금성까지 다녀오는 코스로 하루 종일 걸었지만 
+                                그만한 가치가 있었던 여행이었습니다.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="travel-card">
+                        <div class="travel-image">🏖️</div>
+                        <div class="travel-content">
+                            <h3 class="travel-title">제주도 올레길 걷기</h3>
+                            <p class="travel-date">2024년 8월</p>
+                            <p class="travel-description">
+                                여름 휴가로 다녀온 제주도에서 올레길 7코스를 걸었어요. 
+                                뜨거운 날씨였지만 바다를 보며 걷는 길이 정말 힐링이 되었습니다. 
+                                중간에 만난 카페에서 마신 아이스 아메리카노가 생각나네요.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="travel-card">
+                        <div class="travel-image">🏛️</div>
+                        <div class="travel-content">
+                            <h3 class="travel-title">경주 역사 탐방</h3>
+                            <p class="travel-date">2024년 5월</p>
+                            <p class="travel-description">
+                                불국사와 석굴암을 중심으로 한 경주 여행. 천년의 역사가 고스란히 남아있는 
+                                유적지들을 보며 우리나라의 찬란한 문화유산에 대해 다시 한번 생각해보게 되었어요. 
+                                첨성대에서 본 별하늘도 잊을 수 없습니다.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="travel-card">
+                        <div class="travel-image">🗺️</div>
+                        <div class="travel-content">
+                            <h3 class="travel-title">다음 여행 계획</h3>
+                            <p class="travel-date">2025년 예정</p>
+                            <p class="travel-description">
+                                다음에는 강원도 정동진에서 일출을 보거나, 
+                                전주 한옥마을에서 전통문화를 체험해보고 싶어요. 
+                                새로운 곳에서 만날 경험들이 벌써부터 기대됩니다!
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="project" onclick="showPage('album')">
-                <img src="https://via.placeholder.com/300x200/2196F3/white?text=Album+Project" alt="Project 2" id="project2-img">
-                <div class="info">
-                    <h3>Project 2<br>앨범</h3>
-                    <p>작품소개 앨범</p>
+        </section>
+
+        <!-- Recipes section -->
+        <section id="recipes" class="section">
+            <div class="container">
+                <h2 class="section-title">요리 실험실</h2>
+                <p class="section-subtitle">
+                    집에서 시도해본 레시피들과 요리 노하우
+                </p>
+
+                <div class="recipe-container">
+                    <div class="recipe-card">
+                        <h3 class="recipe-title">간단한 김치볶음밥</h3>
+                        <p class="recipe-time">⏱️ 15분</p>
+                        <div class="recipe-ingredients">
+                            <h4>재료</h4>
+                            <ul class="ingredient-list">
+                                <li>밥 2공기</li>
+                                <li>김치 1/2포기</li>
+                                <li>스팸 1/2캔</li>
+                                <li>계란 2개</li>
+                                <li>참기름, 김가루</li>
+                            </ul>
+                        </div>
+                        <p style="color: #718096; font-size: 0.9rem;">
+                            김치가 너무 셀 때는 설탕을 조금 넣으면 맛이 부드러워져요!
+                        </p>
+                    </div>
+
+                    <div class="recipe-card">
+                        <h3 class="recipe-title">수제 토마토 파스타</h3>
+                        <p class="recipe-time">⏱️ 25분</p>
+                        <div class="recipe-ingredients">
+                            <h4>재료</h4>
+                            <ul class="ingredient-list">
+                                <li>스파게티면 200g</li>
+                                <li>토마토 3개</li>
+                                <li>양파 1/2개</li>
+                                <li>마늘 3쪽</li>
+                                <li>올리브오일, 바질</li>
+                            </ul>
+                        </div>
+                        <p style="color: #718096; font-size: 0.9rem;">
+                            토마토를 으깨면서 볶으면 더 진한 맛이 나요. 파르메산 치즈 추가는 필수!
+                        </p>
+                    </div>
+
+                    <div class="recipe-card">
+                        <h3 class="recipe-title">홈메이드 팬케이크</h3>
+                        <p class="recipe-time">⏱️ 20분</p>
+                        <div class="recipe-ingredients">
+                            <h4>재료</h4>
+                            <ul class="ingredient-list">
+                                <li>박력분 1컵</li>
+                                <li>우유 3/4컵</li>
+                                <li>계란 1개</li>
+                                <li>설탕 2큰술</li>
+                                <li>베이킹파우더 1작은술</li>
+                            </ul>
+                        </div>
+                        <p style="color: #718096; font-size: 0.9rem;">
+                            반죽을 너무 많이 젓지 말고, 약한 불에서 천천히 구우면 완벽해요!
+                        </p>
+                    </div>
+
+                    <div class="recipe-card">
+                        <h3 class="recipe-title">시원한 냉면</h3>
+                        <p class="recipe-time">⏱️ 30분</p>
+                        <div class="recipe-ingredients">
+                            <h4>재료</h4>
+                            <ul class="ingredient-list">
+                                <li>냉면 2인분</li>
+                                <li>동치미 국물 2컵</li>
+                                <li>사과 1/2개</li>
+                                <li>삶은달걀 2개</li>
+                                <li>오이, 배, 무</li>
+                            </ul>
+                        </div>
+                        <p style="color: #718096; font-size: 0.9rem;">
+                            육수가 핵심! 사골육수에 동치미 국물을 섞으면 깔끔하고 시원해요.
+                        </p>
+                    </div>
                 </div>
             </div>
-            <div class="project" onclick="showPage('music')">
-                <img src="https://via.placeholder.com/300x200/9C27B0/white?text=Music+Project" alt="Project 3" id="project3-img">
-                <div class="info">
-                    <h3>Project 3<br>음원 플레이어</h3>
-                    <p>추천음악 TOP10</p>
+        </section>
+
+        <!-- Books section -->
+        <section id="books" class="section">
+            <div class="container">
+                <h2 class="section-title">독서 기록</h2>
+                <p class="section-subtitle">
+                    읽은 책들에 대한 솔직한 후기와 감상
+                </p>
+
+                <div class="books-grid">
+                    <div class="book-card">
+                        <div class="book-cover">📖</div>
+                        <h3 class="book-title">어떻게 살 것인가</h3>
+                        <p class="book-author">유시민</p>
+                        <p class="book-review">
+                            "인생에서 정말 중요한 것들에 대해 생각해보게 만드는 책이었어요. 
+                            특히 '행복한 삶이란 무엇인가'에 대한 부분이 깊이 와닿았습니다. 
+                            저자의 솔직하고 따뜻한 문체가 마음을 편안하게 해주네요."
+                        </p>
+                        <div class="rating">⭐⭐⭐⭐⭐</div>
+                    </div>
+
+                    <div class="book-card">
+                        <div class="book-cover">💡</div>
+                        <h3 class="book-title">습관의 힘</h3>
+                        <p class="book-author">찰스 두히그</p>
+                        <p class="book-review">
+                            "작은 습관이 어떻게 인생을 바꿀 수 있는지 과학적으로 설명한 책. 
+                            습관 고리에 대한 개념이 특히 유용했어요. 이 책을 읽고 나서 
+                            실제로 운동 습관을 만들 수 있었습니다!"
+                        </p>
+                        <div class="rating">⭐⭐⭐⭐⭐</div>
+                    </div>
+
+                    <div class="book-card">
+                        <div class="book-cover">🎨</div>
+                        <h3 class="book-title">미드나잇 라이브러리</h3>
+                        <p class="book-author">매트 헤이그</p>
+                        <p class="book-review">
+                            "인생의 다양한 가능성들에 대해 상상해볼 수 있는 판타지 소설. 
+                            '만약 다른 선택을 했다면?'이라는 질문에 대한 아름다운 답변이었어요. 
+                            읽으면서 울컥했던 순간들이 많았습니다."
+                        </p>
+                        <div class="rating">⭐⭐⭐⭐</div>
+                    </div>
+
+                    <div class="book-card">
+                        <div class="book-cover">📚</div>
+                        <h3 class="book-title">현재 읽고 있는 책</h3>
+                        <p class="book-author">다양한 작가들</p>
+                        <p class="book-review">
+                            "지금은 '사피엔스'와 '코스모스'를 번갈아 읽고 있어요. 
+                            인문학과 과학을 함께 읽으니까 더 재미있는 것 같아요. 
+                            다음에는 어떤 책을 읽을지 벌써 고민 중입니다!"
+                        </p>
+                        <div class="rating">📖 읽는 중...</div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- 영화 소개 페이지 -->
-    <section id="movies" class="page">
-        <h2>영화 소개</h2>
-        <div class="movie-list">
-            <div class="movie-item">
-                <img src="https://via.placeholder.com/400x300/1976D2/white?text=Avatar" alt="아바타">
-                <h3>아바타</h3>
-                <p><b>영화 줄거리:</b> 21세기 중반, 지구의 리소스 고갈로 죽어가는 상황에서 인류는 외계 행성인 판도라에 정착을 시도하며, 아름다운 자연과 황금 나비의 나라로 가득한 이 행성에서 전투 중 다친 형사 제이크 소울리가 자신의 쌍둥이 동생의 연구를 이어받아 판도라의 나비족과의 군대 갈등, 갈등의 격화와 함께 나비족과의 화해와 희망을 찾는 과정을 그린, 환경 보호와 다양성, 평화를 강조하는 영화입니다.</p>
-                <a class="icon-link" href="https://namu.wiki/w/%EC%95%84%EB%B0%94%ED%83%80(%EC%98%81%ED%99%94)" target="_blank">자세히 보기</a>
-            </div>
+        <!-- Fitness section -->
+        <section id="fitness" class="section">
+            <div class="container">
+                <h2 class="section-title">건강 관리</h2>
+                <p class="section-subtitle">
+                    꾸준한 운동과 건강한 습관 만들기
+                </p>
 
-            <div class="movie-item">
-                <img src="https://via.placeholder.com/400x300/E91E63/white?text=Titanic" alt="타이타닉">
-                <h3>타이타닉</h3>
-                <p><b>영화 줄거리:</b> "타이타닉"은 1912년에 침몰한 타이타닉호를 배경으로, 상류층 소녀 로즈와 빈민층 예술가 잭의 사랑 이야기를 그리며, 유적에서 로즈의 노래와 함께 84세에 생을 마치는 그녀의 추억을 되새기는 현대의 노인 로즈의 이야기를 담은 감동적인 로맨스 영화입니다.</p>
-                <a class="icon-link" href="https://namu.wiki/w/%ED%83%80%EC%9D%B4%ED%83%80%EB%8B%89(%EC%98%81%ED%99%94)" target="_blank">자세히 보기</a>
-            </div>
-
-            <div class="movie-item">
-                <img src="https://via.placeholder.com/400x300/4CAF50/white?text=Avengers" alt="어벤져스">
-                <h3>어벤져스 - 엔드게임</h3>
-                <p><b>영화 줄거리:</b> "어벤져스: 엔드게임"은 타노스의 손에서 인피니티 스톤을 되찾기 위해 어벤져스가 과거로 시간여행하고, 히어로들의 희생과 전쟁을 거치며 최종 전투에서 타노스를 물리치고, 토니 스타크가 인피니티 건틀릿을 사용해 자신을 포함한 삶을 희생하며 모든 것을 종결하는 과정을 다룬 마블 시네마틱 유니버스의 대미를 장식한 에픽한 슈퍼히어로 영화입니다.</p>
-                <a class="icon-link" href="https://namu.wiki/w/%EC%96%B4%EB%B2%A4%EC%A0%B8%EC%8A%A4:%20%EC%97%94%EB%93%9C%EA%B2%8C%EC%9E%84" target="_blank">자세히 보기</a>
-            </div>
-
-            <div class="movie-item">
-                <img src="https://via.placeholder.com/400x300/FF9800/white?text=Coming+Soon" alt="영화4">
-                <h3>영화 제목 4</h3>
-                <p>영화 줄거리: 여기에 영화의 간단한 줄거리를 작성합니다.</p>
-                <a class="icon-link" href="#" target="_blank">자세히 보기</a>
-            </div>
-        </div>
-    </section>
-
-    <!-- 앨범 페이지 -->
-    <section id="album" class="page">
-        <h2>사진 앨범</h2>
-        <div class="album-container">
-            <div class="photo-container">
-                <img src="https://via.placeholder.com/500x250/FF5722/white?text=Slide+1" alt="Photo 1" class="active">
-                <img src="https://via.placeholder.com/500x250/2196F3/white?text=Slide+2" alt="Photo 2">
-                <img src="https://via.placeholder.com/500x250/4CAF50/white?text=Slide+3" alt="Photo 3">
-                <img src="https://via.placeholder.com/500x250/9C27B0/white?text=Slide+4" alt="Photo 4">
-                <img src="https://via.placeholder.com/500x250/FF9800/white?text=Slide+5" alt="Photo 5">
-            </div>
-            <button class="prev-btn" onclick="changeSlide(-1)">이전</button>
-            <button class="next-btn" onclick="changeSlide(1)">다음</button>
-        </div>
-    </section>
-
-    <!-- 음원 플레이어 페이지 -->
-    <section id="music" class="page music-page">
-        <h2 id="m_title">음악제목</h2>
-        <div class="viewer">
-            <img src="https://via.placeholder.com/300x300/9C27B0/white?text=Music+Player" alt="음원 이미지" id="music-viewer">
-        </div>
-        <div class="controls">
-            <audio id="audio" controls style="width: 300px; margin-bottom: 20px;">
-                <source src="" type="audio/mp3">
-            </audio>
-            <h3>PLAYLIST</h3>
-            <ul id="playlist">
-                <li data-audio="https://www.soundjay.com/misc/sounds/bell-ringing-05.wav" data-image="https://via.placeholder.com/300x300/1976D2/white?text=Song+1">
-                    <img src="https://via.placeholder.com/50x50/1976D2/white?text=1" alt="">
-                    <p>연성대학교 교가</p>
-                    <div class="bt_con_box">
-                        <img src="https://via.placeholder.com/30x30/FF0000/white?text=P" alt="pause" class="pause-btn">
-                        <img src="https://via.placeholder.com/30x30/00FF00/white?text=▶" alt="play" class="play-btn">
+                <div class="fitness-dashboard">
+                    <div class="fitness-card">
+                        <div class="fitness-icon">🏃‍♂️</div>
+                        <h3 class="fitness-title">이번 주 걸음 수</h3>
+                        <div class="fitness-value">47,382</div>
+                        <div class="fitness-unit">걸음</div>
                     </div>
-                </li>
-                <li data-audio="https://www.soundjay.com/misc/sounds/bell-ringing-05.wav" data-image="https://via.placeholder.com/300x300/E91E63/white?text=Song+2">
-                    <img src="https://via.placeholder.com/50x50/E91E63/white?text=2" alt="">
-                    <p>나의 힙합</p>
-                    <div class="bt_con_box">
-                        <img src="https://via.placeholder.com/30x30/FF0000/white?text=P" alt="pause" class="pause-btn">
-                        <img src="https://via.placeholder.com/30x30/00FF00/white?text=▶" alt="play" class="play-btn">
-                    </div>
-                </li>
-                <li data-audio="https://www.soundjay.com/misc/sounds/bell-ringing-05.wav" data-image="https://via.placeholder.com/300x300/4CAF50/white?text=Song+3">
-                    <img src="https://via.placeholder.com/50x50/4CAF50/white?text=3" alt="">
-                    <p>불꽃 같은 너의 꿈</p>
-                    <div class="bt_con_box">
-                        <img src="https://via.placeholder.com/30x30/FF0000/white?text=P" alt="pause" class="pause-btn">
-                        <img src="https://via.placeholder.com/30x30/00FF00/white?text=▶" alt="play" class="play-btn">
-                    </div>
-                </li>
-                <li data-audio="https://www.soundjay.com/misc/sounds/bell-ringing-05.wav" data-image="https://via.placeholder.com/300x300/FF9800/white?text=Song+4">
-                    <img src="https://via.placeholder.com/50x50/FF9800/white?text=4" alt="">
-                    <p>우리의 이야기</p>
-                    <div class="bt_con_box">
-                        <img src="https://via.placeholder.com/30x30/FF0000/white?text=P" alt="pause" class="pause-btn">
-                        <img src="https://via.placeholder.com/30x30/00FF00/white?text=▶" alt="play" class="play-btn">
-                    </div>
-                </li>
-            </ul>
-        </div>
-    </section>
 
-    <!-- 게임 페이지 -->
-    <section id="game" class="page">
-        <h2>피하기 게임</h2>
-        <article id="portfolio_webgame">
-            <canvas id="myCanvas" width="600" height="400"></canvas>
-            <div id="start_menu">
-                <h1>버튼을 누르시면 게임이 시작됩니다.</h1>
-                <button onclick="startGame()">START</button>
+                    <div class="fitness-card">
+                        <div class="fitness-icon">💪</div>
+                        <h3 class="fitness-title">운동한 날</h3>
+                        <div class="fitness-value">4</div>
+                        <div class="fitness-unit">일 / 주</div>
+                    </div>
+
+                    <div class="fitness-card">
+                        <div class="fitness-icon">⏰</div>
+                        <h3 class="fitness-title">총 운동 시간</h3>
+                        <div class="fitness-value">5.5</div>
+                        <div class="fitness-unit">시간</div>
+                    </div>
+
+                    <div class="fitness-card">
+                        <div class="fitness-icon">🎯</div>
+                        <h3 class="fitness-title">목표 달성률</h3>
+                        <div class="fitness-value">78%</div>
+                        <div class="fitness-unit">완료</div>
+                    </div>
+                </div>
+
+                <div class="workout-log">
+                    <h3 style="margin-bottom: 1rem; color: #2d3748;">이번 주 운동 기록</h3>
+                    
+                    <div class="workout-entry">
+                        <span class="workout-name">🏃‍♂️ 조깅 (한강공원)</span>
+                        <span class="workout-duration">45분</span>
+                    </div>
+
+                    <div class="workout-entry">
+                        <span class="workout-name">💪 홈트레이닝 (상체)</span>
+                        <span class="workout-duration">30분</span>
+                    </div>
+
+                    <div class="workout-entry">
+                        <span class="workout-name">🧘‍♂️ 요가 스트레칭</span>
+                        <span class="workout-duration">20분</span>
+                    </div>
+
+                    <div class="workout-entry">
+                        <span class="workout-name">🚴‍♂️ 실내 자전거</span>
+                        <span class="workout-duration">40분</span>
+                    </div>
+                </div>
             </div>
-        </article>
-    </section>
+        </section>
+
+        <!-- Thoughts section -->
+        <section id="thoughts" class="section">
+            <div class="container">
+                <h2 class="section-title">영화 소개</h2>
+                <p class="section-subtitle">
+                    감명깊게 본 영화들과 그 이야기
+                </p>
+
+                <div class="movie-list">
+                    <div class="movie-item">
+                        <div class="movie-poster">🌊</div>
+                        <div class="movie-content">
+                            <h3 class="movie-title">아바타</h3>
+                            <p class="movie-description">
+                                <b>영화 줄거리:</b> 21세기 중반, 지구의 리소스 고갈로 죽어가는 상황에서 
+                                인류는 외계 행성인 판도라에 정착을 시도하며, 아름다운 자연과 황금 나비의 
+                                나라로 가득한 이 행성에서 전투 중 다친 형사 제이크 소울리가 자신의 쌍둥이 
+                                동생의 연구를 이어받아 판도라의 나비족과의 군대 갈등, 갈등의 격화와 함께 
+                                나비족과의 화해와 희망을 찾는 과정을 그린, 환경 보호와 다양성, 평화를 
+                                강조하는 영화 "아바타"입니다.
+                            </p>
+                            <a class="movie-link" href="https://namu.wiki/w/%EC%95%84%EB%B0%94%ED%83%80(%EC%98%81%ED%99%94)" target="_blank">
+                                자세히 보기
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="movie-item">
+                        <div class="movie-poster">🚢</div>
+                        <div class="movie-content">
+                            <h3 class="movie-title">타이타닉</h3>
+                            <p class="movie-description">
+                                <b>영화 줄거리:</b> "타이타닉"은 1912년에 침몰한 타이타닉호를 배경으로, 상류층 소녀 로즈와 빈민층 예술가 잭의 사랑 이야기를 그리며, 유적에서 로즈의 노래와 함께 84세에 생을 마치는 그녀의 추억을 되새기는 현대의 노인 로즈의 이야기를 담은 감동적인 로맨스 영화입니다.
+                            </p>
+                            <a class="movie-link" href="https://namu.wiki/w/%ED%83%80%EC%9D%B4%ED%83%80%EB%8B%89(%EC%98%81%ED%99%94)" target="_blank">
+                                자세히 보기
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="movie-item">
+                        <div class="movie-poster">⚡</div>
+                        <div class="movie-content">
+                            <h3 class="movie-title">어벤져스 - 엔드게임</h3>
+                            <p class="movie-description">
+                                <b>영화 줄거리:</b> "어벤져스: 엔드게임"은 타노스의 손에서 인피니티 스톤을 되찾기 위해 어벤져스가 과거로 시간여행하고, 히어로들의 희생과 전쟁을 거치며 최종 전투에서 타노스를 물리치고, 토니 스타크가 인피니티 건틀릿을 사용해 자신을 포함한 삶을 희생하며 모든 것을 종결하는 과정을 다룬 마블 시네마틱 유니버스의 대미를 장식한 에픽한 슈퍼히어로 영화입니다.
+                            </p>
+                            <a class="movie-link" href="https://namu.wiki/w/%EC%96%B4%EB%B2%A4%EC%A0%B8%EC%8A%A4:%20%EC%97%94%EB%93%9C%EA%B2%8C%EC%9E%84" target="_blank">
+                                자세히 보기
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="movie-item">
+                        <div class="movie-poster">✨</div>
+                        <div class="movie-content">
+                            <h3 class="movie-title">영화 제목 4</h3>
+                            <p class="movie-description">
+                                영화 줄거리: 여기에 영화의 간단한 줄거리를 작성합니다.
+                            </p>
+                            <a class="movie-link" href="#" target="_blank">
+                                자세히 보기
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
 
     <script>
-        // 페이지 네비게이션
-        function showPage(pageId) {
-            // 모든 페이지 숨기기
-            const pages = document.querySelectorAll('.page');
-            pages.forEach(page => page.classList.remove('active'));
-            
-            // 모든 네비게이션 버튼 비활성화
-            const navBtns = document.querySelectorAll('.nav-btn');
-            navBtns.forEach(btn => btn.classList.remove('active'));
-            
-            // 선택된 페이지 보이기
-            document.getElementById(pageId).classList.add('active');
-            
-            // 해당 버튼 활성화
-            event.target.classList.add('active');
+        // Navigation functionality
+        const navLinks = document.querySelectorAll('.nav-link');
+        const sections = document.querySelectorAll('.section');
+
+        function showSection(sectionId) {
+            sections.forEach(section => section.classList.remove('active'));
+            navLinks.forEach(link => link.classList.remove('active'));
+
+            document.getElementById(sectionId).classList.add('active');
+            document.querySelector(`[data-section="${sectionId}"]`).classList.add('active');
         }
 
-        // 프로젝트 호버 효과
-        $(document).ready(function(){
-            $(".project").hover(
-                function() {
-                    const index = $(this).index() + 1;
-                    const img = $(this).find("img");
-                    // 호버 시 색상 변경 효과
-                    img.css('filter', 'brightness(1.1) saturate(1.2)');
-                },
-                function() {
-                    const img = $(this).find("img");
-                    img.css('filter', 'brightness(1) saturate(1)');
-                }
-            );
-        });
-
-        // 앨범 슬라이드 기능
-        let currentSlide = 0;
-        const slides = document.querySelectorAll('.photo-container img');
-        const totalSlides = slides.length;
-
-        function showSlide(index) {
-            slides.forEach(slide => slide.classList.remove('active'));
-            slides[index].classList.add('active');
-        }
-
-        function changeSlide(direction) {
-            currentSlide += direction;
-            if (currentSlide >= totalSlides) {
-                currentSlide = 0;
-            } else if (currentSlide < 0) {
-                currentSlide = totalSlides - 1;
-            }
-            showSlide(currentSlide);
-        }
-
-        // 자동 슬라이드
-        setInterval(() => {
-            changeSlide(1);
-        }, 3000);
-
-        // 음악 플레이어 기능
-        $(document).ready(function(){
-            const audio = document.getElementById("audio");
-            const playlist = document.getElementById("playlist");
-            const viewer = document.getElementById("music-viewer");
-
-            function resetPlaylist() {
-                $(".bt_con_box").each(function() {
-                    $(this).find(".pause-btn").hide();
-                    $(this).find(".play-btn").show();
-                });
-                $("#playlist li").removeClass('playing');
-            }
-
-            playlist.addEventListener("click", (e) => {
-                if (e.target.tagName === "LI" || e.target.closest('li')) {
-                    const li = e.target.tagName === "LI" ? e.target : e.target.closest('li');
-                    
-                    const audioSrc = li.getAttribute("data-audio");
-                    const imageSrc = li.getAttribute("data-image");
-                    const pText = li.querySelector("p").textContent;
-                    
-                    audio.src = audioSrc;
-                    viewer.src = imageSrc;
-                    document.getElementById("m_title").textContent = pText;
-                    
-                    resetPlaylist();
-                    
-                    li.classList.add('playing');
-                    $(li).find(".bt_con_box .play-btn").hide();
-                    $(li).find(".bt_con_box .pause-btn").show();
-                    
-                    audio.play();
-                }
-            });
-
-            // 초기 설정
-            resetPlaylist();
-        });
-
-        // 게임 코드
-        const canvas = document.getElementById('myCanvas');
-        const ctx = canvas.getContext('2d');
-        
-        const player = {
-            x: canvas.width/2 - 40,
-            y: canvas.height - 100,
-            width: 80,
-            height: 100,
-            speed: 5,
-            life: 3,
-            G_y: 0,
-            m_left: false,
-            m_right: false 
-        };
-        
-        let gravity = 0.5;
-        let OnGround = false;
-        let startTime;
-        let PlayTime = 0;
-        let fallingObjects = [];
-        let gameRunning = false;
-        let regen_time = 2000;
-
-        function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // 배경
-            ctx.fillStyle = '#87CEEB';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            // 지면
-            ctx.fillStyle = '#8B4513';
-            ctx.fillRect(0, canvas.height - 20, canvas.width, 20);
-            
-            // 플레이어
-            ctx.fillStyle = '#FF6B6B';
-            ctx.fillRect(player.x, player.y, player.width, player.height);
-            
-            // 떨어지는 오브젝트들
-            fallingObjects.forEach(function(object) {
-                ctx.fillStyle = '#FF4444';
-                ctx.fillRect(object.x, object.y, object.width, object.height);
-            });
-
-            // UI 텍스트
-            ctx.fillStyle = 'black';
-            ctx.font = '30px Arial';
-            ctx.fillText(`TIME: ${Math.floor(PlayTime / 1000)}`, 20, 40);
-            ctx.fillText(`LIFE: ${player.life}`, 20, 80);
-        }
-
-        function update() {
-            if (canvas.height - 20 <= player.y + player.height) {
-                OnGround = true;
-                player.G_y = 0;
-                player.y = canvas.height - 20 - player.height;
-            } else {
-                OnGround = false;
-            }
-            
-            if (!OnGround) {
-                player.G_y += gravity;
-                player.y += player.G_y;
-            }
-
-            if (player.m_left && player.x > 0) {
-                player.x -= player.speed;
-            }
-            if (player.m_right && player.x + player.width < canvas.width) {
-                player.x += player.speed;
-            }
-
-            // 오브젝트 업데이트 및 충돌 검사
-            fallingObjects.forEach((object, index) => {
-                object.y += object.vy;
-
-                // 충돌 검사
-                if (player.x < object.x + object.width &&
-                    player.x + player.width > object.x &&
-                    player.y < object.y + object.height &&
-                    player.y + player.height > object.y) {
-                    player.life -= 1;
-                    fallingObjects.splice(index, 1);
-                    if (player.life <= 0) {
-                        gameRunning = false;
-                    }
-                }
-
-                // 화면 밖으로 나간 오브젝트 제거
-                if (object.y > canvas.height) {
-                    fallingObjects.splice(index, 1);
-                }
-            });
-
-            PlayTime = Date.now() - startTime;
-            draw();
-        }
-
-        // 키보드 이벤트
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'ArrowLeft') {
-                player.m_left = true;
-            }
-            if (e.key === 'ArrowRight') {
-                player.m_right = true;
-            }
-            if (e.key === ' ') {
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
                 e.preventDefault();
-                if (OnGround) {
-                    player.G_y = -15; // 점프
-                }
-            }
+                const sectionId = link.getAttribute('data-section');
+                showSection(sectionId);
+            });
         });
 
-        document.addEventListener('keyup', function(e) {
-            if (e.key === 'ArrowLeft') {
-                player.m_left = false;
-            }
-            if (e.key === 'ArrowRight') {
-                player.m_right = false;
-            }
+        // Movie card interactions
+        document.querySelectorAll('.movie-item').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                const poster = this.querySelector('.movie-poster');
+                poster.style.transform = 'scale(1.05)';
+                poster.style.transition = 'transform 0.3s ease';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                const poster = this.querySelector('.movie-poster');
+                poster.style.transform = 'scale(1)';
+            });
         });
 
-        function addFallingObject() {
-            if (gameRunning) {
-                const object = {
-                    x: Math.random() * (canvas.width - 40),
-                    y: -60,
-                    width: 40,
-                    height: 60,
-                    vy: 2 + Math.random() * 3
-                };
-                fallingObjects.push(object);
+        // Recipe card interactions
+        document.querySelectorAll('.recipe-card').forEach(card => {
+            card.addEventListener('click', function() {
+                this.style.transform = this.style.transform ? '' : 'scale(1.02)';
+                this.style.boxShadow = this.style.boxShadow ? '' : '0 8px 15px rgba(0, 0, 0, 0.1)';
+            });
+        });
+
+        // Book rating interactions
+        document.querySelectorAll('.book-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px)';
+                this.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.1)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.05)';
+            });
+        });
+
+        // Fitness stats animation
+        function animateCounters() {
+            const counters = document.querySelectorAll('.fitness-value');
+            
+            counters.forEach(counter => {
+                const target = parseInt(counter.textContent.replace(/[^\d]/g, ''));
+                const increment = target / 50;
+                let current = 0;
                 
-                if (regen_time > 150) {
-                    regen_time -= 20;
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        counter.textContent = counter.textContent; // Keep original format
+                        clearInterval(timer);
+                    } else {
+                        if (counter.textContent.includes('%')) {
+                            counter.textContent = Math.ceil(current) + '%';
+                        } else if (counter.textContent.includes('.')) {
+                            counter.textContent = (current / 10).toFixed(1);
+                        } else {
+                            counter.textContent = Math.ceil(current).toLocaleString();
+                        }
+                    }
+                }, 30);
+            });
+        }
+
+        // Trigger counter animation when fitness section becomes active
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && entry.target.id === 'fitness') {
+                    animateCounters();
                 }
-                setTimeout(addFallingObject, regen_time);
-            }
-        }
-        
-        function gameLoop() {
-            if (gameRunning) {
-                update();
-                requestAnimationFrame(gameLoop);
-            } else {
-                // 게임 오버
-                document.querySelector("#start_menu").style.display = 'flex';
-                document.querySelector("#start_menu h1").innerHTML = `게임 오버!<br>점수: ${Math.floor(PlayTime / 1000)}`;
-            }
-        }
+            });
+        });
 
-        function startGame() {
-            // 게임 초기화
-            fallingObjects.length = 0;
-            player.life = 3;
-            player.x = canvas.width/2 - 40;
-            player.y = canvas.height - 120;
-            player.G_y = 0;
-            PlayTime = 0;
-            regen_time = 2000;
-            startTime = Date.now();
-            gameRunning = true;
-            
-            // 시작 메뉴 숨기기
-            document.querySelector("#start_menu").style.display = 'none';
-            
-            // 게임 시작
-            addFallingObject();
-            gameLoop();
-        }
+        observer.observe(document.getElementById('fitness'));
 
-        // 초기 그리기
-        draw();
+        // Travel card hover effects
+        document.querySelectorAll('.travel-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                const image = this.querySelector('.travel-image');
+                image.style.transform = 'scale(1.05)';
+                image.style.transition = 'transform 0.3s ease';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                const image = this.querySelector('.travel-image');
+                image.style.transform = 'scale(1)';
+            });
+        });
     </script>
 </body>
 </html>
