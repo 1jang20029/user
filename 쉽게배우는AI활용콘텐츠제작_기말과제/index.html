@@ -951,7 +951,7 @@
                     </div>
 
                     <div class="track-grid">
-                        <div class="track-item" onclick="playTrack('집중력 향상을 위한 클래식', '01', 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav')">
+                        <div class="track-item" onclick="playTrack('집중력 향상을 위한 클래식', '01', 'https://www.bensound.com/bensound-music/bensound-relaxing.mp3')">
                             <div class="track-number">01</div>
                             <div class="track-info">
                                 <h4>집중력 향상을 위한 클래식</h4>
@@ -959,7 +959,7 @@
                             </div>
                         </div>
 
-                        <div class="track-item" onclick="playTrack('창의적 영감을 주는 비트', '02', 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav')">
+                        <div class="track-item" onclick="playTrack('창의적 영감을 주는 비트', '02', 'https://www.bensound.com/bensound-music/bensound-creativeminds.mp3')">
                             <div class="track-number">02</div>
                             <div class="track-info">
                                 <h4>창의적 영감을 주는 비트</h4>
@@ -967,7 +967,7 @@
                             </div>
                         </div>
 
-                        <div class="track-item" onclick="playTrack('꿈을 향한 여정의 사운드트랙', '03', 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav')">
+                        <div class="track-item" onclick="playTrack('꿈을 향한 여정의 사운드트랙', '03', 'https://www.bensound.com/bensound-music/bensound-sunny.mp3')">
                             <div class="track-number">03</div>
                             <div class="track-info">
                                 <h4>꿈을 향한 여정의 사운드트랙</h4>
@@ -975,7 +975,7 @@
                             </div>
                         </div>
 
-                        <div class="track-item" onclick="playTrack('팀워크와 협업의 하모니', '04', 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav')">
+                        <div class="track-item" onclick="playTrack('팀워크와 협업의 하모니', '04', 'https://www.bensound.com/bensound-music/bensound-energy.mp3')">
                             <div class="track-number">04</div>
                             <div class="track-info">
                                 <h4>팀워크와 협업의 하모니</h4>
@@ -1320,8 +1320,11 @@
                 this.canvas = canvas;
                 this.ctx = canvas.getContext('2d');
                 this.gameRunning = false;
+                this.gameStarted = false;
                 this.score = 0;
                 this.bestScore = localStorage.getItem('flappyBestScore') || 0;
+                this.countdown = 0;
+                this.showCountdown = false;
                 
                 // Game objects
                 this.bird = {
@@ -1330,14 +1333,14 @@
                     width: 30,
                     height: 30,
                     velocity: 0,
-                    gravity: 0.5,
-                    jump: -8
+                    gravity: 0.3,  // 중력 감소 (0.5 → 0.3)
+                    jump: -5       // 점프력 감소 (-8 → -5)
                 };
                 
                 this.pipes = [];
                 this.pipeWidth = 50;
                 this.pipeGap = 120;
-                this.pipeSpeed = 2;
+                this.pipeSpeed = 1.5;  // 파이프 속도 감소 (2 → 1.5)
                 
                 this.setupEventListeners();
                 this.updateUI();
@@ -1347,9 +1350,9 @@
             setupEventListeners() {
                 // Click to jump
                 this.canvas.addEventListener('click', () => {
-                    if (!this.gameRunning) {
-                        this.startGame();
-                    } else {
+                    if (!this.gameStarted) {
+                        this.startCountdown();
+                    } else if (this.gameRunning) {
                         this.bird.velocity = this.bird.jump;
                     }
                 });
@@ -1358,17 +1361,33 @@
                 document.addEventListener('keydown', (e) => {
                     if (e.code === 'Space') {
                         e.preventDefault();
-                        if (!this.gameRunning) {
-                            this.startGame();
-                        } else {
+                        if (!this.gameStarted) {
+                            this.startCountdown();
+                        } else if (this.gameRunning) {
                             this.bird.velocity = this.bird.jump;
                         }
                     }
                 });
             }
             
+            startCountdown() {
+                this.showCountdown = true;
+                this.countdown = 3;
+                document.getElementById('gameStatus').textContent = '준비 중...';
+                
+                const countdownInterval = setInterval(() => {
+                    this.countdown--;
+                    if (this.countdown <= 0) {
+                        clearInterval(countdownInterval);
+                        this.showCountdown = false;
+                        this.startGame();
+                    }
+                }, 1000);
+            }
+            
             startGame() {
                 this.gameRunning = true;
+                this.gameStarted = true;
                 this.score = 0;
                 this.bird.y = 200;
                 this.bird.velocity = 0;
@@ -1379,6 +1398,7 @@
             
             endGame() {
                 this.gameRunning = false;
+                this.gameStarted = false;
                 document.getElementById('gameStatus').textContent = '게임 오버';
                 
                 if (this.score > this.bestScore) {
@@ -1477,17 +1497,32 @@
                     this.ctx.fillStyle = '#228B22';
                 });
                 
-                // Draw start message
-                if (!this.gameRunning) {
+                // Draw countdown
+                if (this.showCountdown) {
                     this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
                     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
                     
                     this.ctx.fillStyle = '#fff';
-                    this.ctx.font = '24px Arial';
+                    this.ctx.font = 'bold 72px Arial';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.fillText(this.countdown, this.canvas.width / 2, this.canvas.height / 2);
+                    
+                    this.ctx.font = '20px Arial';
+                    this.ctx.fillText('게임 시작까지...', this.canvas.width / 2, this.canvas.height / 2 + 50);
+                }
+                
+                // Draw start message
+                else if (!this.gameStarted) {
+                    this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+                    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                    
+                    this.ctx.fillStyle = '#fff';
+                    this.ctx.font = 'bold 32px Arial';
                     this.ctx.textAlign = 'center';
                     this.ctx.fillText('파워앱스', this.canvas.width / 2, this.canvas.height / 2 - 40);
                     this.ctx.font = '16px Arial';
-                    this.ctx.fillText('클릭하거나 스페이스바를 눌러 시작!', this.canvas.width / 2, this.canvas.height / 2);
+                    this.ctx.fillText('클릭하거나 스페이스바를 눌러 시작!', this.canvas.width / 2, this.canvas.height / 2 + 10);
+                    this.ctx.fillText('3초 카운트다운 후 게임이 시작됩니다', this.canvas.width / 2, this.canvas.height / 2 + 30);
                 }
             }
             
