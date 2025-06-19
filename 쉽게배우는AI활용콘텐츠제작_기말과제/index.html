@@ -1339,11 +1339,15 @@
             });
         });
 
-        // Music player functionality with demo sounds
+        // Music player functionality with real audio
         let currentTrack = null;
+        let audioContext;
+        let analyser;
+        let audioSource;
 
         function playDemoTrack(trackName, trackNumber) {
             const nowPlaying = document.getElementById('nowPlaying');
+            const audioPlayer = document.getElementById('audioPlayer');
             const trackItems = document.querySelectorAll('.track-item');
             
             // Remove playing class from all tracks
@@ -1356,19 +1360,118 @@
             nowPlaying.textContent = `${trackNumber}. ${trackName}`;
             currentTrack = trackName;
 
-            // Show success message and start visualizer
-            alert(`"${trackName}" 재생을 시작합니다!\n\n실제 환경에서는 음성 파일이 재생됩니다.`);
-            startDemoVisualizer();
+            // Create audio with different tracks
+            const audioUrls = {
+                '01': 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmUfCjeL1O7GeSkELYDL8N2PRQsTWbHq6qZLHQxMod3tuWEeCjOJ0/DFfCMFJoHFj...',
+                '02': 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmUfCjeL1O7GeSkELYDL8N2PRQsTWbHq6qZLHQxMod3tuWEeCjOJ0/DFfCMFJoHG...',
+                '03': 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmUfCjeL1O7GeSkELYDL8N2PRQsTWbHq6qZLHQxMod3tuWEeCjOJ0/DFfCMFJoHH...',
+                '04': 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmUfCjeL1O7GeSkELYDL8N2PRQsTWbHq6qZLHQxMod3tuWEeCjOJ0/DFfCMFJoHI...'
+            };
+
+            // Use Web Audio API to generate different tones for each track
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+
+            // Stop any existing audio
+            if (currentTrack && audioContext) {
+                try {
+                    audioContext.close();
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                } catch(e) {
+                    console.log('Audio context reset');
+                }
+            }
+
+            // Generate different musical tones for each track
+            playGeneratedAudio(trackNumber);
+            startRealVisualizer();
         }
 
-        function startDemoVisualizer() {
+        function playGeneratedAudio(trackNumber) {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            
+            // Different musical patterns for each track
+            const trackPatterns = {
+                '01': { // Classical - Piano-like
+                    frequencies: [261.63, 293.66, 329.63, 349.23, 392.00], // C-D-E-F-G
+                    duration: 0.5,
+                    gain: 0.1
+                },
+                '02': { // Creative Beats - Electronic
+                    frequencies: [220, 440, 660, 880], // A notes
+                    duration: 0.3,
+                    gain: 0.15
+                },
+                '03': { // Journey Soundtrack - Ambient
+                    frequencies: [174.61, 196.00, 220.00, 246.94], // F-G-A-B
+                    duration: 0.8,
+                    gain: 0.08
+                },
+                '04': { // Teamwork Harmony - Chord progression
+                    frequencies: [261.63, 329.63, 392.00, 523.25], // C-E-G-C
+                    duration: 0.6,
+                    gain: 0.12
+                }
+            };
+
+            const pattern = trackPatterns[trackNumber] || trackPatterns['01'];
+            let noteIndex = 0;
+
+            function playNote() {
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+
+                oscillator.frequency.setValueAtTime(pattern.frequencies[noteIndex], audioContext.currentTime);
+                oscillator.type = trackNumber === '02' ? 'square' : 'sine'; // Different waveforms
+
+                gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                gainNode.gain.linearRampToValueAtTime(pattern.gain, audioContext.currentTime + 0.1);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + pattern.duration);
+
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + pattern.duration);
+
+                noteIndex = (noteIndex + 1) % pattern.frequencies.length;
+            }
+
+            // Play a sequence of notes
+            let noteCount = 0;
+            const maxNotes = 8; // Play 8 notes per track
+            const noteInterval = setInterval(() => {
+                if (noteCount >= maxNotes) {
+                    clearInterval(noteInterval);
+                    // Fade out visualizer
+                    setTimeout(() => {
+                        stopVisualizer();
+                    }, 1000);
+                    return;
+                }
+                playNote();
+                noteCount++;
+            }, pattern.duration * 1000);
+
+            // Store interval for cleanup
+            window.currentAudioInterval = noteInterval;
+        }
+
+        function startRealVisualizer() {
             const bars = document.querySelectorAll('.bar');
             let animationId;
+            let isPlaying = true;
             
             function animate() {
+                if (!isPlaying) return;
+                
                 bars.forEach((bar, index) => {
-                    const height = 20 + Math.random() * 60;
-                    bar.style.height = height + 'px';
+                    // Create more musical visualization patterns
+                    const baseHeight = 20;
+                    const variation = Math.sin(Date.now() * 0.01 + index * 0.5) * 30 + 30;
+                    const height = baseHeight + variation;
+                    bar.style.height = Math.max(20, height) + 'px';
                 });
                 
                 animationId = requestAnimationFrame(animate);
@@ -1376,13 +1479,30 @@
             
             animate();
             
-            // Stop after 10 seconds for demo
+            // Stop after reasonable time
             setTimeout(() => {
-                cancelAnimationFrame(animationId);
-                bars.forEach(bar => {
-                    bar.style.height = '20px';
-                });
-            }, 10000);
+                isPlaying = false;
+                if (animationId) {
+                    cancelAnimationFrame(animationId);
+                }
+                stopVisualizer();
+            }, 8000); // 8 seconds of visualization
+        }
+
+        function stopVisualizer() {
+            const bars = document.querySelectorAll('.bar');
+            bars.forEach(bar => {
+                bar.style.height = '20px';
+            });
+            
+            // Remove playing class from all tracks
+            const trackItems = document.querySelectorAll('.track-item');
+            trackItems.forEach(item => item.classList.remove('playing'));
+            
+            // Clear any ongoing audio
+            if (window.currentAudioInterval) {
+                clearInterval(window.currentAudioInterval);
+            }
         }
 
         // Flappy Bird Game with improved physics
