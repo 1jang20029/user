@@ -341,7 +341,82 @@
             line-height: 1.5;
         }
 
-        /* Visual gallery */
+        /* Movie detail modal */
+        .movie-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            backdrop-filter: blur(10px);
+        }
+
+        .movie-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .movie-detail {
+            background: linear-gradient(135deg, rgba(15, 15, 35, 0.95), rgba(102, 126, 234, 0.1));
+            border-radius: 20px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            position: relative;
+        }
+
+        .movie-detail-header {
+            position: relative;
+            height: 300px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .movie-detail-content {
+            padding: 2rem;
+        }
+
+        .movie-detail-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Visual gallery with upload */
         .gallery-container {
             position: relative;
             height: 500px;
@@ -370,6 +445,34 @@
             opacity: 1;
         }
 
+        .gallery-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .upload-area {
+            background: rgba(102, 126, 234, 0.1);
+            border: 2px dashed rgba(102, 126, 234, 0.3);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            margin: 2rem 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-area:hover {
+            background: rgba(102, 126, 234, 0.2);
+            border-color: #667eea;
+        }
+
+        .upload-area.dragover {
+            background: rgba(102, 126, 234, 0.3);
+            border-color: #667eea;
+            transform: scale(1.02);
+        }
+
         .gallery-nav {
             position: absolute;
             bottom: 2rem;
@@ -396,7 +499,7 @@
             transform: scale(1.05);
         }
 
-        /* Music studio */
+        /* Music studio with real audio */
         .music-studio {
             background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
             border-radius: 24px;
@@ -420,6 +523,11 @@
             margin-bottom: 1rem;
         }
 
+        .audio-player {
+            width: 100%;
+            margin: 1rem 0;
+        }
+
         .music-visualizer {
             display: flex;
             justify-content: center;
@@ -433,20 +541,8 @@
             width: 6px;
             background: linear-gradient(to top, #667eea, #764ba2);
             border-radius: 3px;
-            animation: musicBar 1.5s ease-in-out infinite alternate;
-        }
-
-        .bar:nth-child(even) {
-            animation-delay: 0.2s;
-        }
-
-        .bar:nth-child(3n) {
-            animation-delay: 0.4s;
-        }
-
-        @keyframes musicBar {
-            0% { height: 20px; }
-            100% { height: 60px; }
+            height: 20px;
+            transition: height 0.1s ease;
         }
 
         .track-grid {
@@ -496,8 +592,8 @@
             font-size: 0.9rem;
         }
 
-        /* Interactive playground */
-        .playground {
+        /* Flappy Bird Game */
+        .game-container {
             background: linear-gradient(135deg, rgba(240, 147, 251, 0.05), rgba(245, 87, 108, 0.05));
             border-radius: 24px;
             padding: 3rem;
@@ -505,37 +601,23 @@
             margin: 2rem 0;
         }
 
-        .game-area {
-            background: rgba(0, 0, 0, 0.3);
+        .game-canvas {
+            background: linear-gradient(180deg, #87CEEB 0%, #98FB98 70%, #90EE90 100%);
             border-radius: 16px;
-            height: 300px;
             margin: 2rem auto;
-            max-width: 600px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            color: #94a3b8;
+            display: block;
+            border: 2px solid rgba(102, 126, 234, 0.3);
             cursor: pointer;
-            transition: all 0.3s ease;
-            border: 2px dashed rgba(102, 126, 234, 0.3);
-            position: relative;
-            overflow: hidden;
         }
 
-        .game-area:hover {
-            border-color: #667eea;
-            background: rgba(102, 126, 234, 0.05);
-        }
-
-        .game-stats {
+        .game-ui {
             display: flex;
             justify-content: center;
             gap: 2rem;
             margin-top: 2rem;
         }
 
-        .stat-box {
+        .game-stat {
             background: rgba(255, 255, 255, 0.05);
             border-radius: 12px;
             padding: 1rem 2rem;
@@ -553,6 +635,14 @@
         .stat-label {
             color: #94a3b8;
             font-size: 0.9rem;
+        }
+
+        .game-instructions {
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 12px;
+            padding: 1rem;
+            margin: 1rem 0;
+            border: 1px solid rgba(102, 126, 234, 0.3);
         }
 
         /* Section headers */
@@ -606,9 +696,19 @@
             }
 
             .music-studio,
-            .playground {
+            .game-container {
                 padding: 2rem;
             }
+
+            .game-canvas {
+                width: 90%;
+                height: 300px;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
     </style>
 </head>
@@ -634,6 +734,24 @@
             </ul>
         </div>
     </nav>
+
+    <!-- Movie Detail Modal -->
+    <div class="movie-modal" id="movieModal">
+        <div class="movie-detail">
+            <div class="movie-detail-header" id="modalPoster">
+                <button class="close-btn" onclick="closeMovieDetail()">&times;</button>
+            </div>
+            <div class="movie-detail-content">
+                <h2 class="movie-detail-title" id="modalTitle"></h2>
+                <p class="film-genre" id="modalGenre"></p>
+                <p class="film-summary" id="modalSummary"></p>
+                <div style="margin-top: 2rem;">
+                    <strong style="color: #667eea;">상세 정보:</strong>
+                    <p style="margin-top: 1rem; color: #94a3b8; line-height: 1.6;" id="modalDetails"></p>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Main content -->
     <main class="main">
@@ -718,7 +836,7 @@
                 </div>
 
                 <div class="film-showcase">
-                    <div class="film-card">
+                    <div class="film-card" onclick="showMovieDetail('avatar')">
                         <div class="film-poster">🌊</div>
                         <div class="film-info">
                             <h3 class="film-title">아바타</h3>
@@ -730,7 +848,7 @@
                         </div>
                     </div>
 
-                    <div class="film-card">
+                    <div class="film-card" onclick="showMovieDetail('titanic')">
                         <div class="film-poster">💎</div>
                         <div class="film-info">
                             <h3 class="film-title">타이타닉</h3>
@@ -742,7 +860,7 @@
                         </div>
                     </div>
 
-                    <div class="film-card">
+                    <div class="film-card" onclick="showMovieDetail('endgame')">
                         <div class="film-poster">⚡</div>
                         <div class="film-info">
                             <h3 class="film-title">어벤져스: 엔드게임</h3>
@@ -754,7 +872,7 @@
                         </div>
                     </div>
 
-                    <div class="film-card">
+                    <div class="film-card" onclick="showMovieDetail('future')">
                         <div class="film-poster">✨</div>
                         <div class="film-info">
                             <h3 class="film-title">앞으로의 발견</h3>
@@ -777,6 +895,12 @@
                     <p class="section-subtitle">
                         창작 과정과 영감의 순간들
                     </p>
+                </div>
+
+                <div class="upload-area" onclick="document.getElementById('imageUpload').click()">
+                    <h3 style="color: #667eea; margin-bottom: 1rem;">📸 이미지 업로드</h3>
+                    <p style="color: #94a3b8;">클릭하거나 이미지를 드래그해서 업로드하세요</p>
+                    <input type="file" id="imageUpload" accept="image/*" style="display: none;" multiple>
                 </div>
 
                 <div class="gallery-container">
@@ -808,7 +932,11 @@
                 <div class="music-studio">
                     <div class="music-display">
                         <div class="now-playing" id="nowPlaying">음악을 선택해주세요</div>
-                        <div class="music-visualizer">
+                        <audio id="audioPlayer" class="audio-player" controls style="display: none;">
+                            <source id="audioSource" src="" type="audio/mpeg">
+                            브라우저가 오디오를 지원하지 않습니다.
+                        </audio>
+                        <div class="music-visualizer" id="visualizer">
                             <div class="bar"></div>
                             <div class="bar"></div>
                             <div class="bar"></div>
@@ -823,7 +951,7 @@
                     </div>
 
                     <div class="track-grid">
-                        <div class="track-item" onclick="playTrack('집중력 향상을 위한 클래식', '01')">
+                        <div class="track-item" onclick="playTrack('집중력 향상을 위한 클래식', '01', 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav')">
                             <div class="track-number">01</div>
                             <div class="track-info">
                                 <h4>집중력 향상을 위한 클래식</h4>
@@ -831,7 +959,7 @@
                             </div>
                         </div>
 
-                        <div class="track-item" onclick="playTrack('창의적 영감을 주는 비트', '02')">
+                        <div class="track-item" onclick="playTrack('창의적 영감을 주는 비트', '02', 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav')">
                             <div class="track-number">02</div>
                             <div class="track-info">
                                 <h4>창의적 영감을 주는 비트</h4>
@@ -839,7 +967,7 @@
                             </div>
                         </div>
 
-                        <div class="track-item" onclick="playTrack('꿈을 향한 여정의 사운드트랙', '03')">
+                        <div class="track-item" onclick="playTrack('꿈을 향한 여정의 사운드트랙', '03', 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav')">
                             <div class="track-number">03</div>
                             <div class="track-info">
                                 <h4>꿈을 향한 여정의 사운드트랙</h4>
@@ -847,7 +975,7 @@
                             </div>
                         </div>
 
-                        <div class="track-item" onclick="playTrack('팀워크와 협업의 하모니', '04')">
+                        <div class="track-item" onclick="playTrack('팀워크와 협업의 하모니', '04', 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav')">
                             <div class="track-number">04</div>
                             <div class="track-info">
                                 <h4>팀워크와 협업의 하모니</h4>
@@ -863,29 +991,32 @@
         <section id="play" class="section">
             <div class="container">
                 <div class="section-header">
-                    <h2 class="section-title">인터랙티브 플레이그라운드</h2>
+                    <h2 class="section-title">파워앱스 게임</h2>
                     <p class="section-subtitle">
-                        재미있는 상호작용을 통한 창의적 실험
+                        새가 기둥을 피해 날아가는 인터랙티브 게임
                     </p>
                 </div>
 
-                <div class="playground">
-                    <div class="game-area" id="gameArea" onclick="startCreativeGame()">
-                        <span>🎯 클릭하여 창의력 테스트 시작!</span>
+                <div class="game-container">
+                    <div class="game-instructions">
+                        <h3 style="color: #667eea; margin-bottom: 0.5rem;">🎮 게임 방법</h3>
+                        <p style="color: #94a3b8;">스페이스바나 클릭으로 새를 조종하여 기둥을 피하세요!</p>
                     </div>
-
-                    <div class="game-stats">
-                        <div class="stat-box">
+                    
+                    <canvas id="gameCanvas" class="game-canvas" width="400" height="400"></canvas>
+                    
+                    <div class="game-ui">
+                        <div class="game-stat">
                             <div class="stat-value" id="scoreValue">0</div>
-                            <div class="stat-label">창의점수</div>
+                            <div class="stat-label">점수</div>
                         </div>
-                        <div class="stat-box">
-                            <div class="stat-value" id="levelValue">1</div>
-                            <div class="stat-label">레벨</div>
+                        <div class="game-stat">
+                            <div class="stat-value" id="bestScore">0</div>
+                            <div class="stat-label">최고점수</div>
                         </div>
-                        <div class="stat-box">
-                            <div class="stat-value" id="timeValue">00:00</div>
-                            <div class="stat-label">플레이시간</div>
+                        <div class="game-stat">
+                            <div class="stat-value" id="gameStatus">준비</div>
+                            <div class="stat-label">상태</div>
                         </div>
                     </div>
                 </div>
@@ -894,21 +1025,49 @@
     </main>
 
     <script>
+        // Movie data
+        const movieData = {
+            avatar: {
+                title: '아바타',
+                genre: '환경 · 기술 · 상상력',
+                poster: '🌊',
+                summary: '시각적 혁신과 환경 메시지가 조화를 이룬 작품. 기술이 스토리텔링에 어떻게 기여할 수 있는지 보여준 사례.',
+                details: '제임스 카메론 감독의 혁신적인 3D 영화로, 판도라 행성의 독특한 생태계와 나비족의 문화를 통해 환경보호의 중요성을 강조합니다. 최첨단 모션 캡처 기술과 CGI를 활용하여 전에 없던 시각적 경험을 선사했으며, 영화 제작 기술의 새로운 지평을 열었습니다.'
+            },
+            titanic: {
+                title: '타이타닉',
+                genre: '인간관계 · 감정 · 역사',
+                poster: '💎',
+                summary: '시대적 배경과 개인적 드라마의 완벽한 결합. 사용자 감정을 움직이는 스토리텔링의 힘을 보여줌.',
+                details: '1912년 타이타닉호 침몰 사건을 배경으로 한 로맨틱 드라마. 계급 차이를 뛰어넘은 사랑 이야기를 통해 인간의 존엄성과 희망을 그려냅니다. 역사적 사실과 허구를 절묘하게 조합하여 몰입감 있는 스토리텔링을 구현했습니다.'
+            },
+            endgame: {
+                title: '어벤져스: 엔드게임',
+                genre: '협업 · 완결성 · 팬덤',
+                poster: '⚡',
+                summary: '여러 스토리라인을 하나로 엮어낸 구조적 완성도. 사용자 경험 설계에서 배울 점이 많은 작품.',
+                details: '마블 시네마틱 유니버스의 대미를 장식하는 작품으로, 22편의 영화에서 쌓아온 스토리라인을 하나로 통합했습니다. 각기 다른 캐릭터들의 성장 아크를 완성시키며, 팬들에게 감동적인 결말을 선사했습니다.'
+            },
+            future: {
+                title: '앞으로의 발견',
+                genre: '탐험 · 성장 · 미래',
+                poster: '✨',
+                summary: '계속해서 새로운 영화들을 발견하고 창작 영감으로 연결해나가는 여정.',
+                details: '영화는 끊임없는 발견의 여정입니다. 새로운 장르, 새로운 감독, 새로운 이야기들을 통해 창작자로서의 시각을 넓혀가고 있습니다. 각각의 영화에서 얻은 영감을 개발 프로젝트에 녹여내는 것이 목표입니다.'
+            }
+        };
+
         // Navigation functionality
         const navLinks = document.querySelectorAll('.nav-link');
         const sections = document.querySelectorAll('.section');
 
         function showSection(sectionId) {
-            // Remove active class from all sections and nav links
             sections.forEach(section => section.classList.remove('active'));
             navLinks.forEach(link => link.classList.remove('active'));
-
-            // Add active class to target section and nav link
             document.getElementById(sectionId).classList.add('active');
             document.querySelector(`[data-section="${sectionId}"]`).classList.add('active');
         }
 
-        // Add click listeners to nav links
         navLinks.forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -917,21 +1076,90 @@
             });
         });
 
-        // Gallery functionality
+        // Movie detail functionality
+        function showMovieDetail(movieId) {
+            const movie = movieData[movieId];
+            if (!movie) return;
+
+            document.getElementById('modalPoster').innerHTML = movie.poster + '<button class="close-btn" onclick="closeMovieDetail()">&times;</button>';
+            document.getElementById('modalTitle').textContent = movie.title;
+            document.getElementById('modalGenre').textContent = movie.genre;
+            document.getElementById('modalSummary').textContent = movie.summary;
+            document.getElementById('modalDetails').textContent = movie.details;
+            
+            document.getElementById('movieModal').classList.add('active');
+        }
+
+        function closeMovieDetail() {
+            document.getElementById('movieModal').classList.remove('active');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('movieModal').addEventListener('click', (e) => {
+            if (e.target.id === 'movieModal') {
+                closeMovieDetail();
+            }
+        });
+
+        // Gallery functionality with image upload
         let currentSlideIndex = 0;
         let isAutoSliding = true;
         let slideInterval;
+        let userImages = [];
 
         const slides = document.querySelectorAll('.gallery-slide');
 
+        function updateGallerySlides() {
+            const galleryContainer = document.querySelector('.gallery-container');
+            const existingSlides = galleryContainer.querySelectorAll('.gallery-slide');
+            
+            // Remove existing slides
+            existingSlides.forEach(slide => slide.remove());
+            
+            // Add default slides
+            const defaultSlides = [
+                '창의적 아이디어 스케치',
+                '프로토타입 개발 과정', 
+                '사용자 테스트 순간들',
+                '완성된 프로젝트 결과',
+                '다음 도전을 위한 준비'
+            ];
+            
+            // Create slides for user images
+            userImages.forEach((imageSrc, index) => {
+                const slide = document.createElement('div');
+                slide.className = 'gallery-slide';
+                slide.innerHTML = `<img src="${imageSrc}" alt="업로드된 이미지 ${index + 1}">`;
+                galleryContainer.insertBefore(slide, galleryContainer.querySelector('.gallery-nav'));
+            });
+            
+            // Create default slides
+            defaultSlides.forEach((text, index) => {
+                const slide = document.createElement('div');
+                slide.className = 'gallery-slide';
+                slide.textContent = text;
+                galleryContainer.insertBefore(slide, galleryContainer.querySelector('.gallery-nav'));
+            });
+            
+            // Update slides reference
+            const allSlides = galleryContainer.querySelectorAll('.gallery-slide');
+            if (allSlides.length > 0) {
+                allSlides[0].classList.add('active');
+                currentSlideIndex = 0;
+            }
+        }
+
         function changeSlide(direction) {
-            slides[currentSlideIndex].classList.remove('active');
+            const allSlides = document.querySelectorAll('.gallery-slide');
+            if (allSlides.length === 0) return;
+            
+            allSlides[currentSlideIndex].classList.remove('active');
             
             currentSlideIndex += direction;
-            if (currentSlideIndex >= slides.length) currentSlideIndex = 0;
-            if (currentSlideIndex < 0) currentSlideIndex = slides.length - 1;
+            if (currentSlideIndex >= allSlides.length) currentSlideIndex = 0;
+            if (currentSlideIndex < 0) currentSlideIndex = allSlides.length - 1;
             
-            slides[currentSlideIndex].classList.add('active');
+            allSlides[currentSlideIndex].classList.add('active');
         }
 
         function startAutoSlide() {
@@ -953,11 +1181,63 @@
             }
         }
 
-        // Music player functionality
-        let currentTrack = null;
+        // Image upload functionality
+        const imageUpload = document.getElementById('imageUpload');
+        const uploadArea = document.querySelector('.upload-area');
 
-        function playTrack(trackName, trackNumber) {
+        imageUpload.addEventListener('change', handleImageUpload);
+
+        function handleImageUpload(e) {
+            const files = Array.from(e.target.files);
+            files.forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        userImages.push(e.target.result);
+                        updateGallerySlides();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        // Drag and drop functionality
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            
+            const files = Array.from(e.dataTransfer.files);
+            files.forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        userImages.push(e.target.result);
+                        updateGallerySlides();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+
+        // Music player functionality with real audio
+        let currentTrack = null;
+        let audioContext;
+        let analyser;
+        let audioSource;
+
+        function playTrack(trackName, trackNumber, audioUrl) {
             const nowPlaying = document.getElementById('nowPlaying');
+            const audioPlayer = document.getElementById('audioPlayer');
+            const audioSourceElement = document.getElementById('audioSource');
             const trackItems = document.querySelectorAll('.track-item');
             
             // Remove playing class from all tracks
@@ -966,127 +1246,269 @@
             // Add playing class to clicked track
             event.currentTarget.classList.add('playing');
             
+            // Update audio source and play
+            audioSourceElement.src = audioUrl;
+            audioPlayer.load();
+            audioPlayer.style.display = 'block';
+            
             // Update now playing display
             nowPlaying.textContent = `${trackNumber}. ${trackName}`;
             currentTrack = trackName;
 
-            // Animate visualizer
-            const bars = document.querySelectorAll('.bar');
-            bars.forEach(bar => {
-                bar.style.animationPlayState = 'running';
+            // Start visualizer
+            if (!audioContext) {
+                initAudioVisualizer();
+            }
+            
+            // Play audio
+            audioPlayer.play().catch(e => {
+                console.log('Audio play failed:', e);
+                // Fallback: just show that it's "playing"
+                startVisualizer();
             });
         }
 
-        // Creative game functionality
-        let gameActive = false;
-        let gameScore = 0;
-        let gameLevel = 1;
-        let gameStartTime;
-        let gameTimer;
-
-        function startCreativeGame() {
-            if (gameActive) return;
-
-            gameActive = true;
-            gameScore = 0;
-            gameLevel = 1;
-            gameStartTime = Date.now();
-
-            const gameArea = document.getElementById('gameArea');
-            gameArea.innerHTML = '<span style="font-size: 1rem;">창의적인 색상 조합을 클릭하세요!</span>';
-            
-            // Start timer
-            gameTimer = setInterval(updateTimer, 1000);
-            
-            // Start spawning color combinations
-            spawnColorChallenge();
+        function initAudioVisualizer() {
+            try {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioContext.createAnalyser();
+                
+                const audioPlayer = document.getElementById('audioPlayer');
+                audioSource = audioContext.createMediaElementSource(audioPlayer);
+                audioSource.connect(analyser);
+                analyser.connect(audioContext.destination);
+                
+                analyser.fftSize = 64;
+                
+                audioPlayer.addEventListener('play', startVisualizer);
+                audioPlayer.addEventListener('pause', stopVisualizer);
+            } catch (e) {
+                console.log('AudioContext not supported, using fallback visualizer');
+                const audioPlayer = document.getElementById('audioPlayer');
+                audioPlayer.addEventListener('play', startVisualizer);
+                audioPlayer.addEventListener('pause', stopVisualizer);
+            }
         }
 
-        function spawnColorChallenge() {
-            if (!gameActive) return;
-
-            const gameArea = document.getElementById('gameArea');
-            const colors = ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe', '#00f2fe'];
+        function startVisualizer() {
+            const bars = document.querySelectorAll('.bar');
             
-            // Clear previous challenge
-            gameArea.innerHTML = '';
-            
-            // Create color combination challenge
-            for (let i = 0; i < 3; i++) {
-                const colorBox = document.createElement('div');
-                colorBox.style.cssText = `
-                    width: 80px;
-                    height: 80px;
-                    background: ${colors[Math.floor(Math.random() * colors.length)]};
-                    border-radius: 12px;
-                    margin: 10px;
-                    cursor: pointer;
-                    transition: all 0.3s ease;
-                    display: inline-block;
-                `;
-                
-                colorBox.addEventListener('click', () => {
-                    gameScore += 10 * gameLevel;
-                    updateScore();
-                    
-                    // Level up every 50 points
-                    if (gameScore % 50 === 0) {
-                        gameLevel++;
-                        updateLevel();
-                    }
-                    
-                    // Spawn next challenge
-                    setTimeout(spawnColorChallenge, 500);
+            function animate() {
+                bars.forEach((bar, index) => {
+                    const height = 20 + Math.random() * 60;
+                    bar.style.height = height + 'px';
                 });
                 
-                colorBox.addEventListener('mouseenter', () => {
-                    colorBox.style.transform = 'scale(1.1)';
-                    colorBox.style.boxShadow = '0 10px 20px rgba(0,0,0,0.3)';
-                });
-                
-                colorBox.addEventListener('mouseleave', () => {
-                    colorBox.style.transform = 'scale(1)';
-                    colorBox.style.boxShadow = 'none';
-                });
-                
-                gameArea.appendChild(colorBox);
+                if (!document.getElementById('audioPlayer').paused || !analyser) {
+                    requestAnimationFrame(animate);
+                }
             }
             
-            // Auto-refresh after 3 seconds if no click
-            setTimeout(() => {
-                if (gameActive && gameArea.children.length > 0) {
-                    spawnColorChallenge();
+            animate();
+        }
+
+        function stopVisualizer() {
+            const bars = document.querySelectorAll('.bar');
+            bars.forEach(bar => {
+                bar.style.height = '20px';
+            });
+        }
+
+        // Flappy Bird Game
+        class FlappyBirdGame {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                this.gameRunning = false;
+                this.score = 0;
+                this.bestScore = localStorage.getItem('flappyBestScore') || 0;
+                
+                // Game objects
+                this.bird = {
+                    x: 50,
+                    y: 200,
+                    width: 30,
+                    height: 30,
+                    velocity: 0,
+                    gravity: 0.5,
+                    jump: -8
+                };
+                
+                this.pipes = [];
+                this.pipeWidth = 50;
+                this.pipeGap = 120;
+                this.pipeSpeed = 2;
+                
+                this.setupEventListeners();
+                this.updateUI();
+                this.gameLoop();
+            }
+            
+            setupEventListeners() {
+                // Click to jump
+                this.canvas.addEventListener('click', () => {
+                    if (!this.gameRunning) {
+                        this.startGame();
+                    } else {
+                        this.bird.velocity = this.bird.jump;
+                    }
+                });
+                
+                // Spacebar to jump
+                document.addEventListener('keydown', (e) => {
+                    if (e.code === 'Space') {
+                        e.preventDefault();
+                        if (!this.gameRunning) {
+                            this.startGame();
+                        } else {
+                            this.bird.velocity = this.bird.jump;
+                        }
+                    }
+                });
+            }
+            
+            startGame() {
+                this.gameRunning = true;
+                this.score = 0;
+                this.bird.y = 200;
+                this.bird.velocity = 0;
+                this.pipes = [];
+                this.updateUI();
+                document.getElementById('gameStatus').textContent = '플레이 중';
+            }
+            
+            endGame() {
+                this.gameRunning = false;
+                document.getElementById('gameStatus').textContent = '게임 오버';
+                
+                if (this.score > this.bestScore) {
+                    this.bestScore = this.score;
+                    localStorage.setItem('flappyBestScore', this.bestScore);
+                    document.getElementById('bestScore').textContent = this.bestScore;
                 }
-            }, 3000);
-        }
-
-        function updateScore() {
-            document.getElementById('scoreValue').textContent = gameScore;
-        }
-
-        function updateLevel() {
-            document.getElementById('levelValue').textContent = gameLevel;
-        }
-
-        function updateTimer() {
-            if (!gameActive) return;
+            }
             
-            const elapsed = Date.now() - gameStartTime;
-            const minutes = Math.floor(elapsed / 60000);
-            const seconds = Math.floor((elapsed % 60000) / 1000);
+            updateUI() {
+                document.getElementById('scoreValue').textContent = this.score;
+                document.getElementById('bestScore').textContent = this.bestScore;
+            }
             
-            document.getElementById('timeValue').textContent = 
-                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            update() {
+                if (!this.gameRunning) return;
+                
+                // Update bird
+                this.bird.velocity += this.bird.gravity;
+                this.bird.y += this.bird.velocity;
+                
+                // Check boundaries
+                if (this.bird.y < 0 || this.bird.y + this.bird.height > this.canvas.height) {
+                    this.endGame();
+                    return;
+                }
+                
+                // Add new pipes
+                if (this.pipes.length === 0 || this.pipes[this.pipes.length - 1].x < this.canvas.width - 200) {
+                    const pipeHeight = Math.random() * (this.canvas.height - this.pipeGap - 100) + 50;
+                    this.pipes.push({
+                        x: this.canvas.width,
+                        topHeight: pipeHeight,
+                        bottomY: pipeHeight + this.pipeGap,
+                        bottomHeight: this.canvas.height - (pipeHeight + this.pipeGap),
+                        passed: false
+                    });
+                }
+                
+                // Update pipes
+                for (let i = this.pipes.length - 1; i >= 0; i--) {
+                    const pipe = this.pipes[i];
+                    pipe.x -= this.pipeSpeed;
+                    
+                    // Check collision
+                    if (this.bird.x + this.bird.width > pipe.x && 
+                        this.bird.x < pipe.x + this.pipeWidth) {
+                        if (this.bird.y < pipe.topHeight || 
+                            this.bird.y + this.bird.height > pipe.bottomY) {
+                            this.endGame();
+                            return;
+                        }
+                    }
+                    
+                    // Check score
+                    if (!pipe.passed && pipe.x + this.pipeWidth < this.bird.x) {
+                        pipe.passed = true;
+                        this.score++;
+                        this.updateUI();
+                    }
+                    
+                    // Remove off-screen pipes
+                    if (pipe.x + this.pipeWidth < 0) {
+                        this.pipes.splice(i, 1);
+                    }
+                }
+            }
+            
+            draw() {
+                // Clear canvas
+                this.ctx.fillStyle = '#87CEEB';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // Draw bird
+                this.ctx.fillStyle = '#FFD700';
+                this.ctx.fillRect(this.bird.x, this.bird.y, this.bird.width, this.bird.height);
+                
+                // Draw bird details (simple face)
+                this.ctx.fillStyle = '#000';
+                this.ctx.fillRect(this.bird.x + 20, this.bird.y + 8, 3, 3); // eye
+                this.ctx.fillStyle = '#FF6347';
+                this.ctx.fillRect(this.bird.x + 25, this.bird.y + 15, 8, 3); // beak
+                
+                // Draw pipes
+                this.ctx.fillStyle = '#228B22';
+                this.pipes.forEach(pipe => {
+                    // Top pipe
+                    this.ctx.fillRect(pipe.x, 0, this.pipeWidth, pipe.topHeight);
+                    // Bottom pipe
+                    this.ctx.fillRect(pipe.x, pipe.bottomY, this.pipeWidth, pipe.bottomHeight);
+                    
+                    // Pipe caps
+                    this.ctx.fillStyle = '#32CD32';
+                    this.ctx.fillRect(pipe.x - 5, pipe.topHeight - 20, this.pipeWidth + 10, 20);
+                    this.ctx.fillRect(pipe.x - 5, pipe.bottomY, this.pipeWidth + 10, 20);
+                    this.ctx.fillStyle = '#228B22';
+                });
+                
+                // Draw start message
+                if (!this.gameRunning) {
+                    this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+                    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                    
+                    this.ctx.fillStyle = '#fff';
+                    this.ctx.font = '24px Arial';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.fillText('파워앱스', this.canvas.width / 2, this.canvas.height / 2 - 40);
+                    this.ctx.font = '16px Arial';
+                    this.ctx.fillText('클릭하거나 스페이스바를 눌러 시작!', this.canvas.width / 2, this.canvas.height / 2);
+                }
+            }
+            
+            gameLoop() {
+                this.update();
+                this.draw();
+                requestAnimationFrame(() => this.gameLoop());
+            }
         }
 
-        // Initialize auto-slide when page loads
+        // Initialize game when page loads
         document.addEventListener('DOMContentLoaded', () => {
             startAutoSlide();
             
-            // Add smooth scrolling for better UX
-            document.documentElement.style.scrollBehavior = 'smooth';
+            // Initialize Flappy Bird game
+            const gameCanvas = document.getElementById('gameCanvas');
+            if (gameCanvas) {
+                new FlappyBirdGame(gameCanvas);
+            }
             
-            // Add intersection observer for animations
+            // Performance optimization
             const observerOptions = {
                 threshold: 0.1,
                 rootMargin: '0px 0px -50px 0px'
@@ -1101,71 +1523,41 @@
                 });
             }, observerOptions);
             
-            // Observe all work cards and film cards
             document.querySelectorAll('.work-card, .film-card').forEach(card => {
                 observer.observe(card);
             });
         });
 
-        // Add keyboard shortcuts
+        // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && gameActive) {
-                gameActive = false;
-                clearInterval(gameTimer);
-                document.getElementById('gameArea').innerHTML = '<span>🎯 클릭하여 창의력 테스트 시작!</span>';
+            if (e.key === 'Escape') {
+                closeMovieDetail();
             }
         });
 
-        // Mobile touch support
+        // Mobile touch support for gallery
         let touchStartX = 0;
-        let touchStartY = 0;
 
         document.addEventListener('touchstart', (e) => {
             touchStartX = e.touches[0].clientX;
-            touchStartY = e.touches[0].clientY;
         });
 
         document.addEventListener('touchend', (e) => {
             if (!e.changedTouches) return;
             
             const touchEndX = e.changedTouches[0].clientX;
-            const touchEndY = e.changedTouches[0].clientY;
             const diffX = touchStartX - touchEndX;
-            const diffY = touchStartY - touchEndY;
             
-            // Only trigger on gallery section
             if (document.getElementById('visuals').classList.contains('active')) {
-                if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+                if (Math.abs(diffX) > 50) {
                     if (diffX > 0) {
-                        changeSlide(1); // Swipe left, next slide
+                        changeSlide(1);
                     } else {
-                        changeSlide(-1); // Swipe right, previous slide
+                        changeSlide(-1);
                     }
                 }
             }
         });
-
-        // Performance optimization - lazy loading
-        const lazyElements = document.querySelectorAll('.work-card, .film-card, .track-item');
-        
-        if ('IntersectionObserver' in window) {
-            const lazyObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.opacity = '1';
-                        entry.target.style.transform = 'translateY(0)';
-                        lazyObserver.unobserve(entry.target);
-                    }
-                });
-            });
-            
-            lazyElements.forEach(el => {
-                el.style.opacity = '0';
-                el.style.transform = 'translateY(20px)';
-                el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-                lazyObserver.observe(el);
-            });
-        }
     </script>
 </body>
 </html>
