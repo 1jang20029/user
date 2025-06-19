@@ -1,540 +1,4 @@
-<script>
-        // Movie data
-        const movieData = {
-            avatar: {
-                title: '아바타',
-                genre: '환경 · 기술 · 상상력',
-                poster: '🌊',
-                summary: '시각적 혁신과 환경 메시지가 조화를 이룬 작품. 기술이 스토리텔링에 어떻게 기여할 수 있는지 보여준 사례.',
-                details: '제임스 카메론 감독의 혁신적인 3D 영화로, 판도라 행성의 독특한 생태계와 나비족의 문화를 통해 환경보호의 중요성을 강조합니다. 최첨단 모션 캡처 기술과 CGI를 활용하여 전에 없던 시각적 경험을 선사했으며, 영화 제작 기술의 새로운 지평을 열었습니다.'
-            },
-            titanic: {
-                title: '타이타닉',
-                genre: '인간관계 · 감정 · 역사',
-                poster: '💎',
-                summary: '시대적 배경과 개인적 드라마의 완벽한 결합. 사용자 감정을 움직이는 스토리텔링의 힘을 보여줌.',
-                details: '1912년 타이타닉호 침몰 사건을 배경으로 한 로맨틱 드라마. 계급 차이를 뛰어넘은 사랑 이야기를 통해 인간의 존엄성과 희망을 그려냅니다. 역사적 사실과 허구를 절묘하게 조합하여 몰입감 있는 스토리텔링을 구현했습니다.'
-            },
-            endgame: {
-                title: '어벤져스: 엔드게임',
-                genre: '협업 · 완결성 · 팬덤',
-                poster: '⚡',
-                summary: '여러 스토리라인을 하나로 엮어낸 구조적 완성도. 사용자 경험 설계에서 배울 점이 많은 작품.',
-                details: '마블 시네마틱 유니버스의 대미를 장식하는 작품으로, 22편의 영화에서 쌓아온 스토리라인을 하나로 통합했습니다. 각기 다른 캐릭터들의 성장 아크를 완성시키며, 팬들에게 감동적인 결말을 선사했습니다.'
-            },
-            future: {
-                title: '앞으로의 발견',
-                genre: '탐험 · 성장 · 미래',
-                poster: '✨',
-                summary: '계속해서 새로운 영화들을 발견하고 창작 영감으로 연결해나가는 여정.',
-                details: '영화는 끊임없는 발견의 여정입니다. 새로운 장르, 새로운 감독, 새로운 이야기들을 통해 창작자로서의 시각을 넓혀가고 있습니다. 각각의 영화에서 얻은 영감을 개발 프로젝트에 녹여내는 것이 목표입니다.'
-            }
-        };
-
-        // Navigation functionality
-        const navLinks = document.querySelectorAll('.nav-link');
-        const sections = document.querySelectorAll('.section');
-
-        function showSection(sectionId) {
-            sections.forEach(section => section.classList.remove('active'));
-            navLinks.forEach(link => link.classList.remove('active'));
-            document.getElementById(sectionId).classList.add('active');
-            document.querySelector(`[data-section="${sectionId}"]`).classList.add('active');
-        }
-
-        navLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const sectionId = link.getAttribute('data-section');
-                showSection(sectionId);
-            });
-        });
-
-        // Movie detail functionality
-        function showMovieDetail(movieId) {
-            const movie = movieData[movieId];
-            if (!movie) return;
-
-            document.getElementById('modalPoster').innerHTML = movie.poster + '<button class="close-btn" onclick="closeMovieDetail()">&times;</button>';
-            document.getElementById('modalTitle').textContent = movie.title;
-            document.getElementById('modalGenre').textContent = movie.genre;
-            document.getElementById('modalSummary').textContent = movie.summary;
-            document.getElementById('modalDetails').textContent = movie.details;
-            
-            document.getElementById('movieModal').classList.add('active');
-        }
-
-        function closeMovieDetail() {
-            document.getElementById('movieModal').classList.remove('active');
-        }
-
-        // Close modal when clicking outside
-        document.getElementById('movieModal').addEventListener('click', (e) => {
-            if (e.target.id === 'movieModal') {
-                closeMovieDetail();
-            }
-        });
-
-        // Gallery functionality with image upload
-        let currentSlideIndex = 0;
-        let isAutoSliding = true;
-        let slideInterval;
-        let userImages = [];
-
-        const slides = document.querySelectorAll('.gallery-slide');
-
-        function updateGallerySlides() {
-            const galleryContainer = document.querySelector('.gallery-container');
-            const existingSlides = galleryContainer.querySelectorAll('.gallery-slide');
-            
-            // Remove existing slides
-            existingSlides.forEach(slide => slide.remove());
-            
-            // Add default slides
-            const defaultSlides = [
-                '창의적 아이디어 스케치',
-                '프로토타입 개발 과정', 
-                '사용자 테스트 순간들',
-                '완성된 프로젝트 결과',
-                '다음 도전을 위한 준비'
-            ];
-            
-            // Create slides for user images
-            userImages.forEach((imageSrc, index) => {
-                const slide = document.createElement('div');
-                slide.className = 'gallery-slide';
-                slide.innerHTML = `<img src="${imageSrc}" alt="업로드된 이미지 ${index + 1}">`;
-                galleryContainer.insertBefore(slide, galleryContainer.querySelector('.gallery-nav'));
-            });
-            
-            // Create default slides
-            defaultSlides.forEach((text, index) => {
-                const slide = document.createElement('div');
-                slide.className = 'gallery-slide';
-                slide.textContent = text;
-                galleryContainer.insertBefore(slide, galleryContainer.querySelector('.gallery-nav'));
-            });
-            
-            // Update slides reference
-            const allSlides = galleryContainer.querySelectorAll('.gallery-slide');
-            if (allSlides.length > 0) {
-                allSlides[0].classList.add('active');
-                currentSlideIndex = 0;
-            }
-        }
-
-        function changeSlide(direction) {
-            const allSlides = document.querySelectorAll('.gallery-slide');
-            if (allSlides.length === 0) return;
-            
-            allSlides[currentSlideIndex].classList.remove('active');
-            
-            currentSlideIndex += direction;
-            if (currentSlideIndex >= allSlides.length) currentSlideIndex = 0;
-            if (currentSlideIndex < 0) currentSlideIndex = allSlides.length - 1;
-            
-            allSlides[currentSlideIndex].classList.add('active');
-        }
-
-        function startAutoSlide() {
-            slideInterval = setInterval(() => {
-                changeSlide(1);
-            }, 4000);
-        }
-
-        function toggleAutoSlide() {
-            const btn = event.target;
-            if (isAutoSliding) {
-                clearInterval(slideInterval);
-                btn.textContent = '▶️ 재생';
-                isAutoSliding = false;
-            } else {
-                startAutoSlide();
-                btn.textContent = '⏸️ 일시정지';
-                isAutoSliding = true;
-            }
-        }
-
-        // Image upload functionality
-        const imageUpload = document.getElementById('imageUpload');
-        const uploadArea = document.querySelector('.upload-area');
-
-        imageUpload.addEventListener('change', handleImageUpload);
-
-        function handleImageUpload(e) {
-            const files = Array.from(e.target.files);
-            files.forEach(file => {
-                if (file.type.startsWith('image/')) {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        userImages.push(e.target.result);
-                        updateGallerySlides();
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
-        }
-
-        // Drag and drop functionality
-        uploadArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            uploadArea.classList.add('dragover');
-        });
-
-        uploadArea.addEventListener('dragleave', () => {
-            uploadArea.classList.remove('dragover');
-        });
-
-        uploadArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            uploadArea.classList.remove('dragover');
-            
-            const files = Array.from(e.dataTransfer.files);
-            files.forEach(file => {
-                if (file.type.startsWith('image/')) {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        userImages.push(e.target.result);
-                        updateGallerySlides();
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
-        });
-
-        // Music player functionality with demo sounds
-        let currentTrack = null;
-
-        function playDemoTrack(trackName, trackNumber) {
-            const nowPlaying = document.getElementById('nowPlaying');
-            const trackItems = document.querySelectorAll('.track-item');
-            
-            // Remove playing class from all tracks
-            trackItems.forEach(item => item.classList.remove('playing'));
-            
-            // Add playing class to clicked track
-            event.currentTarget.classList.add('playing');
-            
-            // Update now playing display
-            nowPlaying.textContent = `${trackNumber}. ${trackName}`;
-            currentTrack = trackName;
-
-            // Show success message and start visualizer
-            alert(`"${trackName}" 재생을 시작합니다!\n\n실제 환경에서는 음성 파일이 재생됩니다.`);
-            startDemoVisualizer();
-        }
-
-        function startDemoVisualizer() {
-            const bars = document.querySelectorAll('.bar');
-            let animationId;
-            
-            function animate() {
-                bars.forEach((bar, index) => {
-                    const height = 20 + Math.random() * 60;
-                    bar.style.height = height + 'px';
-                });
-                
-                animationId = requestAnimationFrame(animate);
-            }
-            
-            animate();
-            
-            // Stop after 10 seconds for demo
-            setTimeout(() => {
-                cancelAnimationFrame(animationId);
-                bars.forEach(bar => {
-                    bar.style.height = '20px';
-                });
-            }, 10000);
-        }
-
-        // Flappy Bird Game with improved physics
-        class FlappyBirdGame {
-            constructor(canvas) {
-                this.canvas = canvas;
-                this.ctx = canvas.getContext('2d');
-                this.gameRunning = false;
-                this.gameStarted = false;
-                this.score = 0;
-                this.bestScore = localStorage.getItem('flappyBestScore') || 0;
-                this.countdown = 0;
-                this.showCountdown = false;
-                
-                // Game objects with improved physics
-                this.bird = {
-                    x: 50,
-                    y: 200,
-                    width: 30,
-                    height: 30,
-                    velocity: 0,
-                    gravity: 0.2,   // 더 부드러운 중력 (0.3 → 0.2)
-                    jump: -4        // 더 부드러운 점프 (-5 → -4)
-                };
-                
-                this.pipes = [];
-                this.pipeWidth = 50;
-                this.pipeGap = 140;     // 더 넓은 간격 (120 → 140)
-                this.pipeSpeed = 1.2;   // 더 느린 속도 (1.5 → 1.2)
-                
-                this.setupEventListeners();
-                this.updateUI();
-                this.gameLoop();
-            }
-            
-            setupEventListeners() {
-                // Click to jump
-                this.canvas.addEventListener('click', () => {
-                    if (!this.gameStarted) {
-                        this.startCountdown();
-                    } else if (this.gameRunning) {
-                        this.bird.velocity = this.bird.jump;
-                    }
-                });
-                
-                // Spacebar to jump
-                document.addEventListener('keydown', (e) => {
-                    if (e.code === 'Space') {
-                        e.preventDefault();
-                        if (!this.gameStarted) {
-                            this.startCountdown();
-                        } else if (this.gameRunning) {
-                            this.bird.velocity = this.bird.jump;
-                        }
-                    }
-                });
-            }
-            
-            startCountdown() {
-                this.showCountdown = true;
-                this.countdown = 3;
-                document.getElementById('gameStatus').textContent = '준비 중...';
-                
-                const countdownInterval = setInterval(() => {
-                    this.countdown--;
-                    if (this.countdown <= 0) {
-                        clearInterval(countdownInterval);
-                        this.showCountdown = false;
-                        this.startGame();
-                    }
-                }, 1000);
-            }
-            
-            startGame() {
-                this.gameRunning = true;
-                this.gameStarted = true;
-                this.score = 0;
-                this.bird.y = 200;
-                this.bird.velocity = 0;
-                this.pipes = [];
-                this.updateUI();
-                document.getElementById('gameStatus').textContent = '플레이 중';
-            }
-            
-            endGame() {
-                this.gameRunning = false;
-                this.gameStarted = false;
-                document.getElementById('gameStatus').textContent = '게임 오버';
-                
-                if (this.score > this.bestScore) {
-                    this.bestScore = this.score;
-                    localStorage.setItem('flappyBestScore', this.bestScore);
-                    document.getElementById('bestScore').textContent = this.bestScore;
-                }
-                
-                // 2초 후 자동으로 다시 시작할 수 있도록
-                setTimeout(() => {
-                    document.getElementById('gameStatus').textContent = '준비';
-                }, 2000);
-            }
-            
-            updateUI() {
-                document.getElementById('scoreValue').textContent = this.score;
-                document.getElementById('bestScore').textContent = this.bestScore;
-            }
-            
-            update() {
-                if (!this.gameRunning) return;
-                
-                // Update bird
-                this.bird.velocity += this.bird.gravity;
-                this.bird.y += this.bird.velocity;
-                
-                // Check boundaries
-                if (this.bird.y < 0 || this.bird.y + this.bird.height > this.canvas.height) {
-                    this.endGame();
-                    return;
-                }
-                
-                // Add new pipes
-                if (this.pipes.length === 0 || this.pipes[this.pipes.length - 1].x < this.canvas.width - 200) {
-                    const pipeHeight = Math.random() * (this.canvas.height - this.pipeGap - 100) + 50;
-                    this.pipes.push({
-                        x: this.canvas.width,
-                        topHeight: pipeHeight,
-                        bottomY: pipeHeight + this.pipeGap,
-                        bottomHeight: this.canvas.height - (pipeHeight + this.pipeGap),
-                        passed: false
-                    });
-                }
-                
-                // Update pipes
-                for (let i = this.pipes.length - 1; i >= 0; i--) {
-                    const pipe = this.pipes[i];
-                    pipe.x -= this.pipeSpeed;
-                    
-                    // Check collision
-                    if (this.bird.x + this.bird.width > pipe.x && 
-                        this.bird.x < pipe.x + this.pipeWidth) {
-                        if (this.bird.y < pipe.topHeight || 
-                            this.bird.y + this.bird.height > pipe.bottomY) {
-                            this.endGame();
-                            return;
-                        }
-                    }
-                    
-                    // Check score
-                    if (!pipe.passed && pipe.x + this.pipeWidth < this.bird.x) {
-                        pipe.passed = true;
-                        this.score++;
-                        this.updateUI();
-                    }
-                    
-                    // Remove off-screen pipes
-                    if (pipe.x + this.pipeWidth < 0) {
-                        this.pipes.splice(i, 1);
-                    }
-                }
-            }
-            
-            draw() {
-                // Clear canvas
-                this.ctx.fillStyle = '#87CEEB';
-                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-                
-                // Draw bird
-                this.ctx.fillStyle = '#FFD700';
-                this.ctx.fillRect(this.bird.x, this.bird.y, this.bird.width, this.bird.height);
-                
-                // Draw bird details (simple face)
-                this.ctx.fillStyle = '#000';
-                this.ctx.fillRect(this.bird.x + 20, this.bird.y + 8, 3, 3); // eye
-                this.ctx.fillStyle = '#FF6347';
-                this.ctx.fillRect(this.bird.x + 25, this.bird.y + 15, 8, 3); // beak
-                
-                // Draw pipes
-                this.ctx.fillStyle = '#228B22';
-                this.pipes.forEach(pipe => {
-                    // Top pipe
-                    this.ctx.fillRect(pipe.x, 0, this.pipeWidth, pipe.topHeight);
-                    // Bottom pipe
-                    this.ctx.fillRect(pipe.x, pipe.bottomY, this.pipeWidth, pipe.bottomHeight);
-                    
-                    // Pipe caps
-                    this.ctx.fillStyle = '#32CD32';
-                    this.ctx.fillRect(pipe.x - 5, pipe.topHeight - 20, this.pipeWidth + 10, 20);
-                    this.ctx.fillRect(pipe.x - 5, pipe.bottomY, this.pipeWidth + 10, 20);
-                    this.ctx.fillStyle = '#228B22';
-                });
-                
-                // Draw countdown
-                if (this.showCountdown) {
-                    this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-                    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-                    
-                    this.ctx.fillStyle = '#fff';
-                    this.ctx.font = 'bold 72px Arial';
-                    this.ctx.textAlign = 'center';
-                    this.ctx.fillText(this.countdown, this.canvas.width / 2, this.canvas.height / 2);
-                    
-                    this.ctx.font = '20px Arial';
-                    this.ctx.fillText('게임 시작까지...', this.canvas.width / 2, this.canvas.height / 2 + 50);
-                }
-                
-                // Draw start message
-                else if (!this.gameStarted) {
-                    this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-                    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-                    
-                    this.ctx.fillStyle = '#fff';
-                    this.ctx.font = 'bold 32px Arial';
-                    this.ctx.textAlign = 'center';
-                    this.ctx.fillText('파워앱스', this.canvas.width / 2, this.canvas.height / 2 - 40);
-                    this.ctx.font = '16px Arial';
-                    this.ctx.fillText('클릭하거나 스페이스바를 눌러 시작!', this.canvas.width / 2, this.canvas.height / 2 + 10);
-                    this.ctx.fillText('3초 카운트다운 후 게임이 시작됩니다', this.canvas.width / 2, this.canvas.height / 2 + 30);
-                }
-            }
-            
-            gameLoop() {
-                this.update();
-                this.draw();
-                requestAnimationFrame(() => this.gameLoop());
-            }
-        }
-
-        // Initialize game when page loads
-        document.addEventListener('DOMContentLoaded', () => {
-            startAutoSlide();
-            
-            // Initialize Flappy Bird game
-            const gameCanvas = document.getElementById('gameCanvas');
-            if (gameCanvas) {
-                new FlappyBirdGame(gameCanvas);
-            }
-            
-            // Performance optimization
-            const observerOptions = {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
-            };
-            
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.animationDelay = '0s';
-                        entry.target.style.animation = 'fadeInUp 0.6s ease-out forwards';
-                    }
-                });
-            }, observerOptions);
-            
-            document.querySelectorAll('.work-card, .film-card').forEach(card => {
-                observer.observe(card);
-            });
-        });
-
-        // Keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                closeMovieDetail();
-            }
-        });
-
-        // Mobile touch support for gallery
-        let touchStartX = 0;
-
-        document.addEventListener('touchstart', (e) => {
-            touchStartX = e.touches[0].clientX;
-        });
-
-        document.addEventListener('touchend', (e) => {
-            if (!e.changedTouches) return;
-            
-            const touchEndX = e.changedTouches[0].clientX;
-            const diffX = touchStartX - touchEndX;
-            
-            if (document.getElementById('visuals').classList.contains('active')) {
-                if (Math.abs(diffX) > 50) {
-                    if (diffX > 0) {
-                        changeSlide(1);
-                    } else {
-                        changeSlide(-1);
-                    }
-                }
-            }
-        });
-    </script>
-</body>
-</html><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
@@ -1560,8 +1024,6 @@
         </section>
     </main>
 
-       </main>
-
     <!-- Footer -->
     <footer style="background: rgba(15, 15, 35, 0.9); padding: 3rem 2rem; text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.1);">
         <div class="container">
@@ -1660,6 +1122,597 @@
     </div>
 
     <script>
+        // Movie data
+        const movieData = {
+            avatar: {
+                title: '아바타',
+                genre: '환경 · 기술 · 상상력',
+                poster: '🌊',
+                summary: '시각적 혁신과 환경 메시지가 조화를 이룬 작품. 기술이 스토리텔링에 어떻게 기여할 수 있는지 보여준 사례.',
+                details: '제임스 카메론 감독의 혁신적인 3D 영화로, 판도라 행성의 독특한 생태계와 나비족의 문화를 통해 환경보호의 중요성을 강조합니다. 최첨단 모션 캡처 기술과 CGI를 활용하여 전에 없던 시각적 경험을 선사했으며, 영화 제작 기술의 새로운 지평을 열었습니다.'
+            },
+            titanic: {
+                title: '타이타닉',
+                genre: '인간관계 · 감정 · 역사',
+                poster: '💎',
+                summary: '시대적 배경과 개인적 드라마의 완벽한 결합. 사용자 감정을 움직이는 스토리텔링의 힘을 보여줌.',
+                details: '1912년 타이타닉호 침몰 사건을 배경으로 한 로맨틱 드라마. 계급 차이를 뛰어넘은 사랑 이야기를 통해 인간의 존엄성과 희망을 그려냅니다. 역사적 사실과 허구를 절묘하게 조합하여 몰입감 있는 스토리텔링을 구현했습니다.'
+            },
+            endgame: {
+                title: '어벤져스: 엔드게임',
+                genre: '협업 · 완결성 · 팬덤',
+                poster: '⚡',
+                summary: '여러 스토리라인을 하나로 엮어낸 구조적 완성도. 사용자 경험 설계에서 배울 점이 많은 작품.',
+                details: '마블 시네마틱 유니버스의 대미를 장식하는 작품으로, 22편의 영화에서 쌓아온 스토리라인을 하나로 통합했습니다. 각기 다른 캐릭터들의 성장 아크를 완성시키며, 팬들에게 감동적인 결말을 선사했습니다.'
+            },
+            future: {
+                title: '앞으로의 발견',
+                genre: '탐험 · 성장 · 미래',
+                poster: '✨',
+                summary: '계속해서 새로운 영화들을 발견하고 창작 영감으로 연결해나가는 여정.',
+                details: '영화는 끊임없는 발견의 여정입니다. 새로운 장르, 새로운 감독, 새로운 이야기들을 통해 창작자로서의 시각을 넓혀가고 있습니다. 각각의 영화에서 얻은 영감을 개발 프로젝트에 녹여내는 것이 목표입니다.'
+            }
+        };
+
+        // Navigation functionality
+        function showSection(sectionId) {
+            const sections = document.querySelectorAll('.section');
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            sections.forEach(section => section.classList.remove('active'));
+            navLinks.forEach(link => link.classList.remove('active'));
+            
+            const targetSection = document.getElementById(sectionId);
+            const targetLink = document.querySelector(`[data-section="${sectionId}"]`);
+            
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
+            if (targetLink) {
+                targetLink.classList.add('active');
+            }
+        }
+
+        // Initialize navigation after DOM is loaded
+        function initializeNavigation() {
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const sectionId = link.getAttribute('data-section');
+                    if (sectionId) {
+                        showSection(sectionId);
+                    }
+                });
+            });
+        }
+
+        // Movie detail functionality
+        function showMovieDetail(movieId) {
+            const movie = movieData[movieId];
+            if (!movie) return;
+
+            document.getElementById('modalPoster').innerHTML = movie.poster + '<button class="close-btn" onclick="closeMovieDetail()">&times;</button>';
+            document.getElementById('modalTitle').textContent = movie.title;
+            document.getElementById('modalGenre').textContent = movie.genre;
+            document.getElementById('modalSummary').textContent = movie.summary;
+            document.getElementById('modalDetails').textContent = movie.details;
+            
+            document.getElementById('movieModal').classList.add('active');
+        }
+
+        function closeMovieDetail() {
+            document.getElementById('movieModal').classList.remove('active');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('movieModal').addEventListener('click', (e) => {
+            if (e.target.id === 'movieModal') {
+                closeMovieDetail();
+            }
+        });
+
+        // Gallery functionality with image upload
+        let currentSlideIndex = 0;
+        let isAutoSliding = true;
+        let slideInterval;
+        let userImages = [];
+
+        const slides = document.querySelectorAll('.gallery-slide');
+
+        function updateGallerySlides() {
+            const galleryContainer = document.querySelector('.gallery-container');
+            const existingSlides = galleryContainer.querySelectorAll('.gallery-slide');
+            
+            // Remove existing slides
+            existingSlides.forEach(slide => slide.remove());
+            
+            // Add default slides
+            const defaultSlides = [
+                '창의적 아이디어 스케치',
+                '프로토타입 개발 과정', 
+                '사용자 테스트 순간들',
+                '완성된 프로젝트 결과',
+                '다음 도전을 위한 준비'
+            ];
+            
+            // Create slides for user images
+            userImages.forEach((imageSrc, index) => {
+                const slide = document.createElement('div');
+                slide.className = 'gallery-slide';
+                slide.innerHTML = `<img src="${imageSrc}" alt="업로드된 이미지 ${index + 1}">`;
+                galleryContainer.insertBefore(slide, galleryContainer.querySelector('.gallery-nav'));
+            });
+            
+            // Create default slides
+            defaultSlides.forEach((text, index) => {
+                const slide = document.createElement('div');
+                slide.className = 'gallery-slide';
+                slide.textContent = text;
+                galleryContainer.insertBefore(slide, galleryContainer.querySelector('.gallery-nav'));
+            });
+            
+            // Update slides reference
+            const allSlides = galleryContainer.querySelectorAll('.gallery-slide');
+            if (allSlides.length > 0) {
+                allSlides[0].classList.add('active');
+                currentSlideIndex = 0;
+            }
+        }
+
+        function changeSlide(direction) {
+            const allSlides = document.querySelectorAll('.gallery-slide');
+            if (allSlides.length === 0) return;
+            
+            allSlides[currentSlideIndex].classList.remove('active');
+            
+            currentSlideIndex += direction;
+            if (currentSlideIndex >= allSlides.length) currentSlideIndex = 0;
+            if (currentSlideIndex < 0) currentSlideIndex = allSlides.length - 1;
+            
+            allSlides[currentSlideIndex].classList.add('active');
+        }
+
+        function startAutoSlide() {
+            slideInterval = setInterval(() => {
+                changeSlide(1);
+            }, 4000);
+        }
+
+        function toggleAutoSlide() {
+            const btn = event.target;
+            if (isAutoSliding) {
+                clearInterval(slideInterval);
+                btn.textContent = '▶️ 재생';
+                isAutoSliding = false;
+            } else {
+                startAutoSlide();
+                btn.textContent = '⏸️ 일시정지';
+                isAutoSliding = true;
+            }
+        }
+
+        // Image upload functionality
+        const imageUpload = document.getElementById('imageUpload');
+        const uploadArea = document.querySelector('.upload-area');
+
+        imageUpload.addEventListener('change', handleImageUpload);
+
+        function handleImageUpload(e) {
+            const files = Array.from(e.target.files);
+            files.forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        userImages.push(e.target.result);
+                        updateGallerySlides();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        // Drag and drop functionality
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            
+            const files = Array.from(e.dataTransfer.files);
+            files.forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        userImages.push(e.target.result);
+                        updateGallerySlides();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+
+        // Music player functionality with demo sounds
+        let currentTrack = null;
+
+        function playDemoTrack(trackName, trackNumber) {
+            const nowPlaying = document.getElementById('nowPlaying');
+            const trackItems = document.querySelectorAll('.track-item');
+            
+            // Remove playing class from all tracks
+            trackItems.forEach(item => item.classList.remove('playing'));
+            
+            // Add playing class to clicked track
+            event.currentTarget.classList.add('playing');
+            
+            // Update now playing display
+            nowPlaying.textContent = `${trackNumber}. ${trackName}`;
+            currentTrack = trackName;
+
+            // Show success message and start visualizer
+            alert(`"${trackName}" 재생을 시작합니다!\n\n실제 환경에서는 음성 파일이 재생됩니다.`);
+            startDemoVisualizer();
+        }
+
+        function startDemoVisualizer() {
+            const bars = document.querySelectorAll('.bar');
+            let animationId;
+            
+            function animate() {
+                bars.forEach((bar, index) => {
+                    const height = 20 + Math.random() * 60;
+                    bar.style.height = height + 'px';
+                });
+                
+                animationId = requestAnimationFrame(animate);
+            }
+            
+            animate();
+            
+            // Stop after 10 seconds for demo
+            setTimeout(() => {
+                cancelAnimationFrame(animationId);
+                bars.forEach(bar => {
+                    bar.style.height = '20px';
+                });
+            }, 10000);
+        }
+
+        // Flappy Bird Game with improved physics
+        class FlappyBirdGame {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                this.gameRunning = false;
+                this.gameStarted = false;
+                this.score = 0;
+                this.bestScore = localStorage.getItem('flappyBestScore') || 0;
+                this.countdown = 0;
+                this.showCountdown = false;
+                
+                // Game objects with improved physics
+                this.bird = {
+                    x: 50,
+                    y: 200,
+                    width: 30,
+                    height: 30,
+                    velocity: 0,
+                    gravity: 0.2,   // 더 부드러운 중력 (0.3 → 0.2)
+                    jump: -4        // 더 부드러운 점프 (-5 → -4)
+                };
+                
+                this.pipes = [];
+                this.pipeWidth = 50;
+                this.pipeGap = 140;     // 더 넓은 간격 (120 → 140)
+                this.pipeSpeed = 1.2;   // 더 느린 속도 (1.5 → 1.2)
+                
+                this.setupEventListeners();
+                this.updateUI();
+                this.gameLoop();
+            }
+            
+            setupEventListeners() {
+                // Click to jump
+                this.canvas.addEventListener('click', () => {
+                    if (!this.gameStarted) {
+                        this.startCountdown();
+                    } else if (this.gameRunning) {
+                        this.bird.velocity = this.bird.jump;
+                    }
+                });
+                
+                // Spacebar to jump
+                document.addEventListener('keydown', (e) => {
+                    if (e.code === 'Space') {
+                        e.preventDefault();
+                        if (!this.gameStarted) {
+                            this.startCountdown();
+                        } else if (this.gameRunning) {
+                            this.bird.velocity = this.bird.jump;
+                        }
+                    }
+                });
+            }
+            
+            startCountdown() {
+                this.showCountdown = true;
+                this.countdown = 3;
+                document.getElementById('gameStatus').textContent = '준비 중...';
+                
+                const countdownInterval = setInterval(() => {
+                    this.countdown--;
+                    if (this.countdown <= 0) {
+                        clearInterval(countdownInterval);
+                        this.showCountdown = false;
+                        this.startGame();
+                    }
+                }, 1000);
+            }
+            
+            startGame() {
+                this.gameRunning = true;
+                this.gameStarted = true;
+                this.score = 0;
+                this.bird.y = 200;
+                this.bird.velocity = 0;
+                this.pipes = [];
+                this.updateUI();
+                document.getElementById('gameStatus').textContent = '플레이 중';
+            }
+            
+            endGame() {
+                this.gameRunning = false;
+                document.getElementById('gameStatus').textContent = '게임 오버';
+                
+                if (this.score > this.bestScore) {
+                    this.bestScore = this.score;
+                    localStorage.setItem('flappyBestScore', this.bestScore);
+                    document.getElementById('bestScore').textContent = this.bestScore;
+                }
+                
+                // 2초 후 자동으로 다시 시작할 수 있도록
+                setTimeout(() => {
+                    this.gameStarted = false;
+                    document.getElementById('gameStatus').textContent = '준비';
+                }, 2000);
+            }
+            
+            updateUI() {
+                document.getElementById('scoreValue').textContent = this.score;
+                document.getElementById('bestScore').textContent = this.bestScore;
+            }
+            
+            update() {
+                if (!this.gameRunning) return;
+                
+                // Update bird
+                this.bird.velocity += this.bird.gravity;
+                this.bird.y += this.bird.velocity;
+                
+                // Check boundaries
+                if (this.bird.y < 0 || this.bird.y + this.bird.height > this.canvas.height) {
+                    this.endGame();
+                    return;
+                }
+                
+                // Add new pipes
+                if (this.pipes.length === 0 || this.pipes[this.pipes.length - 1].x < this.canvas.width - 200) {
+                    const pipeHeight = Math.random() * (this.canvas.height - this.pipeGap - 100) + 50;
+                    this.pipes.push({
+                        x: this.canvas.width,
+                        topHeight: pipeHeight,
+                        bottomY: pipeHeight + this.pipeGap,
+                        bottomHeight: this.canvas.height - (pipeHeight + this.pipeGap),
+                        passed: false
+                    });
+                }
+                
+                // Update pipes
+                for (let i = this.pipes.length - 1; i >= 0; i--) {
+                    const pipe = this.pipes[i];
+                    pipe.x -= this.pipeSpeed;
+                    
+                    // Check collision
+                    if (this.bird.x + this.bird.width > pipe.x && 
+                        this.bird.x < pipe.x + this.pipeWidth) {
+                        if (this.bird.y < pipe.topHeight || 
+                            this.bird.y + this.bird.height > pipe.bottomY) {
+                            this.endGame();
+                            return;
+                        }
+                    }
+                    
+                    // Check score
+                    if (!pipe.passed && pipe.x + this.pipeWidth < this.bird.x) {
+                        pipe.passed = true;
+                        this.score++;
+                        this.updateUI();
+                    }
+                    
+                    // Remove off-screen pipes
+                    if (pipe.x + this.pipeWidth < 0) {
+                        this.pipes.splice(i, 1);
+                    }
+                }
+            }
+            
+            draw() {
+                // Clear canvas with sky gradient
+                const gradient = this.ctx.createLinearGradient(0, 0, 0, this.canvas.height);
+                gradient.addColorStop(0, '#87CEEB');  // Sky blue
+                gradient.addColorStop(0.7, '#98FB98'); // Light green
+                gradient.addColorStop(1, '#90EE90');   // Light green
+                this.ctx.fillStyle = gradient;
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // Draw clouds
+                this.ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                this.ctx.beginPath();
+                this.ctx.arc(80, 60, 25, 0, Math.PI * 2);
+                this.ctx.arc(100, 60, 35, 0, Math.PI * 2);
+                this.ctx.arc(120, 60, 25, 0, Math.PI * 2);
+                this.ctx.fill();
+                
+                this.ctx.beginPath();
+                this.ctx.arc(280, 40, 20, 0, Math.PI * 2);
+                this.ctx.arc(300, 40, 30, 0, Math.PI * 2);
+                this.ctx.arc(320, 40, 20, 0, Math.PI * 2);
+                this.ctx.fill();
+                
+                // Draw bird
+                this.ctx.fillStyle = '#FFD700';
+                this.ctx.fillRect(this.bird.x, this.bird.y, this.bird.width, this.bird.height);
+                
+                // Draw bird details (simple face)
+                this.ctx.fillStyle = '#000';
+                this.ctx.fillRect(this.bird.x + 20, this.bird.y + 8, 3, 3); // eye
+                this.ctx.fillStyle = '#FF6347';
+                this.ctx.fillRect(this.bird.x + 25, this.bird.y + 15, 8, 3); // beak
+                
+                // Draw pipes
+                this.ctx.fillStyle = '#228B22';
+                this.pipes.forEach(pipe => {
+                    // Top pipe
+                    this.ctx.fillRect(pipe.x, 0, this.pipeWidth, pipe.topHeight);
+                    // Bottom pipe
+                    this.ctx.fillRect(pipe.x, pipe.bottomY, this.pipeWidth, pipe.bottomHeight);
+                    
+                    // Pipe caps
+                    this.ctx.fillStyle = '#32CD32';
+                    this.ctx.fillRect(pipe.x - 5, pipe.topHeight - 20, this.pipeWidth + 10, 20);
+                    this.ctx.fillRect(pipe.x - 5, pipe.bottomY, this.pipeWidth + 10, 20);
+                    this.ctx.fillStyle = '#228B22';
+                });
+                
+                // Draw score during game
+                if (this.gameRunning) {
+                    this.ctx.fillStyle = '#fff';
+                    this.ctx.font = 'bold 24px Arial';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.fillText(this.score, this.canvas.width / 2, 50);
+                }
+                
+                // Draw countdown
+                if (this.showCountdown) {
+                    this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+                    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                    
+                    this.ctx.fillStyle = '#fff';
+                    this.ctx.font = 'bold 72px Arial';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.fillText(this.countdown, this.canvas.width / 2, this.canvas.height / 2);
+                    
+                    this.ctx.font = '20px Arial';
+                    this.ctx.fillText('게임 시작까지...', this.canvas.width / 2, this.canvas.height / 2 + 50);
+                }
+                
+                // Draw start message
+                else if (!this.gameStarted) {
+                    this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+                    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                    
+                    this.ctx.fillStyle = '#fff';
+                    this.ctx.font = 'bold 32px Arial';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.fillText('파워앱스', this.canvas.width / 2, this.canvas.height / 2 - 40);
+                    this.ctx.font = '16px Arial';
+                    this.ctx.fillText('클릭하거나 스페이스바를 눌러 시작!', this.canvas.width / 2, this.canvas.height / 2 + 10);
+                    this.ctx.fillText('3초 카운트다운 후 게임이 시작됩니다', this.canvas.width / 2, this.canvas.height / 2 + 30);
+                }
+                
+                // Draw game over message
+                else if (!this.gameRunning && this.gameStarted) {
+                    this.ctx.fillStyle = 'rgba(255, 0, 0, 0.7)';
+                    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                    
+                    this.ctx.fillStyle = '#fff';
+                    this.ctx.font = 'bold 32px Arial';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.fillText('게임 오버!', this.canvas.width / 2, this.canvas.height / 2 - 20);
+                    this.ctx.font = '16px Arial';
+                    this.ctx.fillText(`점수: ${this.score}`, this.canvas.width / 2, this.canvas.height / 2 + 20);
+                    this.ctx.fillText('클릭해서 다시 시작', this.canvas.width / 2, this.canvas.height / 2 + 40);
+                }
+            }
+            
+            gameLoop() {
+                this.update();
+                this.draw();
+                requestAnimationFrame(() => this.gameLoop());
+            }
+        }
+
+        // Initialize game when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize navigation first
+            initializeNavigation();
+            
+            startAutoSlide();
+            
+            // Initialize Flappy Bird game
+            const gameCanvas = document.getElementById('gameCanvas');
+            if (gameCanvas) {
+                new FlappyBirdGame(gameCanvas);
+            }
+            
+            // Performance optimization
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animationDelay = '0s';
+                        entry.target.style.animation = 'fadeInUp 0.6s ease-out forwards';
+                    }
+                });
+            }, observerOptions);
+            
+            document.querySelectorAll('.work-card, .film-card').forEach(card => {
+                observer.observe(card);
+            });
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeMovieDetail();
+            }
+        });
+
+        // Mobile touch support for gallery
+        let touchStartX = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            if (!e.changedTouches) return;
+            
+            const touchEndX = e.changedTouches[0].clientX;
+            const diffX = touchStartX - touchEndX;
+            
+            if (document.getElementById('visuals').classList.contains('active')) {
+                if (Math.abs(diffX) > 50) {
+                    if (diffX > 0) {
+                        changeSlide(1);
+                    } else {
+                        changeSlide(-1);
+                    }
+                }
+            }
+        });
+
         // Back to Top functionality
         window.addEventListener('scroll', () => {
             const backToTopBtn = document.getElementById('backToTop');
