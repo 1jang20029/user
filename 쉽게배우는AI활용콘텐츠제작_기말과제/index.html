@@ -1590,21 +1590,20 @@
                 
                 // 게임 배경음악 패턴 (경쾌한 8비트 스타일)
                 const musicPattern = [
-                    { freq: 523.25, duration: 0.2 }, // C5
-                    { freq: 587.33, duration: 0.2 }, // D5
-                    { freq: 659.25, duration: 0.2 }, // E5
-                    { freq: 698.46, duration: 0.2 }, // F5
-                    { freq: 783.99, duration: 0.4 }, // G5
-                    { freq: 659.25, duration: 0.2 }, // E5
-                    { freq: 523.25, duration: 0.4 }, // C5
-                    { freq: 587.33, duration: 0.2 }, // D5
-                    { freq: 659.25, duration: 0.6 }, // E5
+                    { freq: 523.25, duration: 0.3 }, // C5
+                    { freq: 587.33, duration: 0.3 }, // D5
+                    { freq: 659.25, duration: 0.3 }, // E5
+                    { freq: 698.46, duration: 0.3 }, // F5
+                    { freq: 783.99, duration: 0.6 }, // G5
+                    { freq: 659.25, duration: 0.3 }, // E5
+                    { freq: 523.25, duration: 0.6 }, // C5
+                    { freq: 587.33, duration: 0.3 }, // D5
+                    { freq: 659.25, duration: 0.9 }, // E5
                 ];
                 
                 let noteIndex = 0;
-                let startTime = this.audioContext.currentTime;
                 
-                const playMusicLoop = () => {
+                const playNextNote = () => {
                     if (!this.isMusicPlaying || !this.gameRunning) return;
                     
                     const note = musicPattern[noteIndex];
@@ -1614,26 +1613,26 @@
                     oscillator.connect(gainNode);
                     gainNode.connect(this.audioContext.destination);
                     
-                    oscillator.frequency.setValueAtTime(note.freq, startTime);
+                    oscillator.frequency.setValueAtTime(note.freq, this.audioContext.currentTime);
                     oscillator.type = 'square'; // 8비트 사운드
                     
-                    gainNode.gain.setValueAtTime(0, startTime);
-                    gainNode.gain.linearRampToValueAtTime(0.05, startTime + 0.01); // 볼륨 낮춤
-                    gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + note.duration);
+                    gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
+                    gainNode.gain.linearRampToValueAtTime(0.08, this.audioContext.currentTime + 0.02); // 볼륨 증가
+                    gainNode.gain.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + note.duration - 0.05);
                     
-                    oscillator.start(startTime);
-                    oscillator.stop(startTime + note.duration);
+                    oscillator.start(this.audioContext.currentTime);
+                    oscillator.stop(this.audioContext.currentTime + note.duration);
                     
-                    startTime += note.duration;
                     noteIndex = (noteIndex + 1) % musicPattern.length;
                     
                     // 다음 음표 예약
-                    if (this.isMusicPlaying && this.gameRunning) {
-                        setTimeout(playMusicLoop, note.duration * 1000);
-                    }
+                    setTimeout(() => {
+                        playNextNote();
+                    }, note.duration * 1000);
                 };
                 
-                playMusicLoop();
+                // 첫 번째 음표부터 시작
+                playNextNote();
             }
             
             stopBackgroundMusic() {
@@ -1649,15 +1648,87 @@
                 oscillator.connect(gainNode);
                 gainNode.connect(this.audioContext.destination);
                 
-                oscillator.frequency.setValueAtTime(800, this.audioContext.currentTime);
-                oscillator.frequency.exponentialRampToValueAtTime(400, this.audioContext.currentTime + 0.1);
-                oscillator.type = 'square';
+                oscillator.frequency.setValueAtTime(600, this.audioContext.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(300, this.audioContext.currentTime + 0.15);
+                oscillator.type = 'triangle';
                 
-                gainNode.gain.setValueAtTime(0.1, this.audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + 0.1);
+                gainNode.gain.setValueAtTime(0.2, this.audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + 0.15);
                 
                 oscillator.start(this.audioContext.currentTime);
-                oscillator.stop(this.audioContext.currentTime + 0.1);
+                oscillator.stop(this.audioContext.currentTime + 0.15);
+            }
+            
+            playScoreSound() {
+                if (!this.audioContext) return;
+                
+                // 점수 획득 시 상승하는 멜로디
+                const frequencies = [523.25, 659.25, 783.99]; // C-E-G 코드
+                
+                frequencies.forEach((freq, index) => {
+                    const oscillator = this.audioContext.createOscillator();
+                    const gainNode = this.audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(this.audioContext.destination);
+                    
+                    const startTime = this.audioContext.currentTime + (index * 0.1);
+                    oscillator.frequency.setValueAtTime(freq, startTime);
+                    oscillator.type = 'sine';
+                    
+                    gainNode.gain.setValueAtTime(0, startTime);
+                    gainNode.gain.linearRampToValueAtTime(0.15, startTime + 0.05);
+                    gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + 0.25);
+                    
+                    oscillator.start(startTime);
+                    oscillator.stop(startTime + 0.25);
+                });
+            }
+            
+            playCountdownSound() {
+                if (!this.audioContext) return;
+                
+                const oscillator = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(400, this.audioContext.currentTime);
+                oscillator.type = 'square';
+                
+                gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
+                gainNode.gain.linearRampToValueAtTime(0.1, this.audioContext.currentTime + 0.1);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + 0.3);
+                
+                oscillator.start(this.audioContext.currentTime);
+                oscillator.stop(this.audioContext.currentTime + 0.3);
+            }
+            
+            playStartSound() {
+                if (!this.audioContext) return;
+                
+                // 게임 시작 시 팡파레 사운드
+                const melody = [523.25, 659.25, 783.99, 1046.50]; // C-E-G-C
+                
+                melody.forEach((freq, index) => {
+                    const oscillator = this.audioContext.createOscillator();
+                    const gainNode = this.audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(this.audioContext.destination);
+                    
+                    const startTime = this.audioContext.currentTime + (index * 0.15);
+                    oscillator.frequency.setValueAtTime(freq, startTime);
+                    oscillator.type = 'triangle';
+                    
+                    gainNode.gain.setValueAtTime(0, startTime);
+                    gainNode.gain.linearRampToValueAtTime(0.2, startTime + 0.05);
+                    gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + 0.3);
+                    
+                    oscillator.start(startTime);
+                    oscillator.stop(startTime + 0.3);
+                });
             }
             
             playGameOverSound() {
@@ -1689,8 +1760,19 @@
                 this.countdown = 3;
                 document.getElementById('gameStatus').textContent = '준비 중...';
                 
+                // 오디오 컨텍스트 초기화
+                if (!this.audioContext) {
+                    this.initAudio();
+                }
+                
                 const countdownInterval = setInterval(() => {
                     this.countdown--;
+                    
+                    // 카운트다운 사운드 재생
+                    if (this.countdown > 0) {
+                        this.playCountdownSound();
+                    }
+                    
                     if (this.countdown <= 0) {
                         clearInterval(countdownInterval);
                         this.showCountdown = false;
@@ -1709,11 +1791,13 @@
                 this.updateUI();
                 document.getElementById('gameStatus').textContent = '플레이 중';
                 
-                // 오디오 초기화 및 배경음악 시작
-                if (!this.audioContext) {
-                    this.initAudio();
-                }
-                this.playBackgroundMusic();
+                // 게임 시작 사운드 재생
+                this.playStartSound();
+                
+                // 배경음악 시작 (시작 사운드 후 약간의 딜레이)
+                setTimeout(() => {
+                    this.playBackgroundMusic();
+                }, 600);
             }
             
             endGame() {
@@ -1787,6 +1871,7 @@
                         pipe.passed = true;
                         this.score++;
                         this.updateUI();
+                        this.playScoreSound(); // 점수 획득 사운드 추가
                     }
                     
                     // Remove off-screen pipes
