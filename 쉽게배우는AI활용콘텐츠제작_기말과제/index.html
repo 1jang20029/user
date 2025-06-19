@@ -1505,7 +1505,7 @@
             }
         }
 
-        // Flappy Bird Game with improved physics
+        // Flappy Bird Game with improved physics and background music
         class FlappyBirdGame {
             constructor(canvas) {
                 this.canvas = canvas;
@@ -1516,6 +1516,11 @@
                 this.bestScore = localStorage.getItem('flappyBestScore') || 0;
                 this.countdown = 0;
                 this.showCountdown = false;
+                
+                // Background music setup
+                this.audioContext = null;
+                this.backgroundMusic = null;
+                this.isMusicPlaying = false;
                 
                 // Game objects with improved physics
                 this.bird = {
@@ -1548,6 +1553,7 @@
                         this.startCountdown();
                     } else if (this.gameRunning) {
                         this.bird.velocity = this.bird.jump;
+                        this.playJumpSound(); // 점프 사운드 추가
                     }
                 });
                 
@@ -1563,9 +1569,116 @@
                             this.startCountdown();
                         } else if (this.gameRunning) {
                             this.bird.velocity = this.bird.jump;
+                            this.playJumpSound(); // 점프 사운드 추가
                         }
                     }
                 });
+            }
+            
+            initAudio() {
+                try {
+                    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                } catch (e) {
+                    console.log('Audio not supported');
+                }
+            }
+            
+            playBackgroundMusic() {
+                if (!this.audioContext || this.isMusicPlaying) return;
+                
+                this.isMusicPlaying = true;
+                
+                // 게임 배경음악 패턴 (경쾌한 8비트 스타일)
+                const musicPattern = [
+                    { freq: 523.25, duration: 0.2 }, // C5
+                    { freq: 587.33, duration: 0.2 }, // D5
+                    { freq: 659.25, duration: 0.2 }, // E5
+                    { freq: 698.46, duration: 0.2 }, // F5
+                    { freq: 783.99, duration: 0.4 }, // G5
+                    { freq: 659.25, duration: 0.2 }, // E5
+                    { freq: 523.25, duration: 0.4 }, // C5
+                    { freq: 587.33, duration: 0.2 }, // D5
+                    { freq: 659.25, duration: 0.6 }, // E5
+                ];
+                
+                let noteIndex = 0;
+                let startTime = this.audioContext.currentTime;
+                
+                const playMusicLoop = () => {
+                    if (!this.isMusicPlaying || !this.gameRunning) return;
+                    
+                    const note = musicPattern[noteIndex];
+                    const oscillator = this.audioContext.createOscillator();
+                    const gainNode = this.audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(this.audioContext.destination);
+                    
+                    oscillator.frequency.setValueAtTime(note.freq, startTime);
+                    oscillator.type = 'square'; // 8비트 사운드
+                    
+                    gainNode.gain.setValueAtTime(0, startTime);
+                    gainNode.gain.linearRampToValueAtTime(0.05, startTime + 0.01); // 볼륨 낮춤
+                    gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + note.duration);
+                    
+                    oscillator.start(startTime);
+                    oscillator.stop(startTime + note.duration);
+                    
+                    startTime += note.duration;
+                    noteIndex = (noteIndex + 1) % musicPattern.length;
+                    
+                    // 다음 음표 예약
+                    if (this.isMusicPlaying && this.gameRunning) {
+                        setTimeout(playMusicLoop, note.duration * 1000);
+                    }
+                };
+                
+                playMusicLoop();
+            }
+            
+            stopBackgroundMusic() {
+                this.isMusicPlaying = false;
+            }
+            
+            playJumpSound() {
+                if (!this.audioContext) return;
+                
+                const oscillator = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(800, this.audioContext.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(400, this.audioContext.currentTime + 0.1);
+                oscillator.type = 'square';
+                
+                gainNode.gain.setValueAtTime(0.1, this.audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + 0.1);
+                
+                oscillator.start(this.audioContext.currentTime);
+                oscillator.stop(this.audioContext.currentTime + 0.1);
+            }
+            
+            playGameOverSound() {
+                if (!this.audioContext) return;
+                
+                // 게임 오버 사운드 (하강하는 톤)
+                const oscillator = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(400, this.audioContext.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(200, this.audioContext.currentTime + 0.5);
+                oscillator.type = 'sawtooth';
+                
+                gainNode.gain.setValueAtTime(0.15, this.audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + 0.5);
+                
+                oscillator.start(this.audioContext.currentTime);
+                oscillator.stop(this.audioContext.currentTime + 0.5);
             }
             
             startCountdown() {
@@ -1595,11 +1708,21 @@
                 this.pipes = [];
                 this.updateUI();
                 document.getElementById('gameStatus').textContent = '플레이 중';
+                
+                // 오디오 초기화 및 배경음악 시작
+                if (!this.audioContext) {
+                    this.initAudio();
+                }
+                this.playBackgroundMusic();
             }
             
             endGame() {
                 this.gameRunning = false;
                 document.getElementById('gameStatus').textContent = '게임 오버';
+                
+                // 배경음악 중단 및 게임 오버 사운드 재생
+                this.stopBackgroundMusic();
+                this.playGameOverSound();
                 
                 if (this.score > this.bestScore) {
                     this.bestScore = this.score;
