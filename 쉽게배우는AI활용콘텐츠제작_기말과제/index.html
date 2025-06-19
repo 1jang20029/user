@@ -1,217 +1,10 @@
-// Add movie functionality
-        function addMovie() {
-            const title = document.getElementById('movieTitle').value.trim();
-            const emoji = document.getElementById('movieEmoji').value.trim() || '🎬';
-            const description = document.getElementById('movieDescription').value.trim();
-            const link = document.getElementById('movieLink').value.trim();
-
-            if (!title || !description) {
-                alert('영화 제목과 줄거리를 입력해주세요!');
-                return;
-            }
-
-            // Create new movie item
-            const movieList = document.getElementById('movieList');
-            const movieItem = document.createElement('div');
-            movieItem.className = 'movie-item';
-            
-            movieItem.innerHTML = `
-                <div class="movie-poster">${emoji}</div>
-                <div class="movie-content">
-                    <h3 class="movie-title">${title}</h3>
-                    <p class="movie-description">${description}</p>
-                    ${link ? 
-                        `<a class="movie-link" href="${link}" target="_blank">자세히 보기</a>` : 
-                        `<span class="movie-link" style="background: #cbd5e0; color: #718096; cursor: not-allowed;">링크 없음</span>`
-                    }
-                    <button class="delete-btn" onclick="deleteMovie(this)">🗑️</button>
-                </div>
-            `;
-
-            // Add to movie list
-            movieList.appendChild(movieItem);
-
-            // Clear form
-            document.getElementById('movieTitle').value = '';
-            document.getElementById('movieEmoji').value = '';
-            document.getElementById('movieDescription').value = '';
-            document.getElementById('movieLink').value = '';
-
-            // Save to localStorage
-            saveMoviesToStorage();
-
-            // Show success message
-            showNotification('영화가 성공적으로 추가되었습니다! 🎉');
-
-            // Add hover effects to new movie item
-            addMovieHoverEffects(movieItem);
-        }
-
-        // Delete movie functionality
-        function deleteMovie(button) {
-            if (confirm('이 영화를 삭제하시겠습니까?')) {
-                const movieItem = button.closest('.movie-item');
-                movieItem.style.animation = 'slideOutUp 0.3s ease-in forwards';
-                
-                setTimeout(() => {
-                    movieItem.remove();
-                    saveMoviesToStorage();
-                    showNotification('영화가 삭제되었습니다.');
-                }, 300);
-            }
-        }
-
-        // Save movies to localStorage
-        function saveMoviesToStorage() {
-            const movieItems = document.querySelectorAll('.movie-item');
-            const movies = [];
-            
-            movieItems.forEach(item => {
-                const emoji = item.querySelector('.movie-poster').textContent;
-                const title = item.querySelector('.movie-title').textContent;
-                const description = item.querySelector('.movie-description').textContent;
-                const linkElement = item.querySelector('.movie-link');
-                const link = linkElement.href && linkElement.href !== window.location.href + '#' ? linkElement.href : '';
-                
-                movies.push({ emoji, title, description, link });
-            });
-            
-            localStorage.setItem('userMovies', JSON.stringify(movies));
-        }
-
-        // Load movies from localStorage
-        function loadMoviesFromStorage() {
-            const savedMovies = localStorage.getItem('userMovies');
-            if (savedMovies) {
-                const movies = JSON.parse(savedMovies);
-                const movieList = document.getElementById('movieList');
-                
-                // Clear existing movies except default ones
-                movieList.innerHTML = '';
-                
-                movies.forEach(movie => {
-                    const movieItem = document.createElement('div');
-                    movieItem.className = 'movie-item';
-                    
-                    movieItem.innerHTML = `
-                        <div class="movie-poster">${movie.emoji}</div>
-                        <div class="movie-content">
-                            <h3 class="movie-title">${movie.title}</h3>
-                            <p class="movie-description">${movie.description}</p>
-                            ${movie.link ? 
-                                `<a class="movie-link" href="${movie.link}" target="_blank">자세히 보기</a>` : 
-                                `<span class="movie-link" style="background: #cbd5e0; color: #718096; cursor: not-allowed;">링크 없음</span>`
-                            }
-                            <button class="delete-btn" onclick="deleteMovie(this)">🗑️</button>
-                        </div>
-                    `;
-                    
-                    movieList.appendChild(movieItem);
-                    addMovieHoverEffects(movieItem);
-                });
-            }
-        }
-
-        // Show notification
-        function showNotification(message) {
-            // Create notification element
-            const notification = document.createElement('div');
-            notification.style.cssText = `
-                position: fixed;
-                top: 100px;
-                right: 2rem;
-                background: #48bb78;
-                color: white;
-                padding: 1rem 1.5rem;
-                border-radius: 8px;
-                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-                z-index: 10000;
-                animation: slideInRight 0.3s ease-out;
-                font-weight: 500;
-            `;
-            notification.textContent = message;
-            
-            document.body.appendChild(notification);
-            
-            // Remove after 3 seconds
-            setTimeout(() => {
-                notification.style.animation = 'slideOutRight 0.3s ease-in forwards';
-                setTimeout(() => {
-                    if (notification.parentNode) {
-                        notification.parentNode.removeChild(notification);
-                    }
-                }, 300);
-            }, 3000);
-        }
-
-        // Add hover effects to movie items
-        function addMovieHoverEffects(movieItem) {
-            movieItem.addEventListener('mouseenter', function() {
-                const poster = this.querySelector('.movie-poster');
-                poster.style.transform = 'scale(1.05)';
-                poster.style.transition = 'transform 0.3s ease';
-            });
-            
-            movieItem.addEventListener('mouseleave', function() {
-                const poster = this.querySelector('.movie-poster');
-                poster.style.transform = 'scale(1)';
-            });
-        }
-
-        // Add CSS animations for notifications
-        const notificationStyles = document.createElement('style');
-        notificationStyles.textContent = `
-            @keyframes slideInRight {
-                from {
-                    opacity: 0;
-                    transform: translateX(100%);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateX(0);
-                }
-            }
-            
-            @keyframes slideOutRight {
-                from {
-                    opacity: 1;
-                    transform: translateX(0);
-                }
-                to {
-                    opacity: 0;
-                    transform: translateX(100%);
-                }
-            }
-            
-            @keyframes slideOutUp {
-                from {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-                to {
-                    opacity: 0;
-                    transform: translateY(-20px);
-                }
-            }
-        `;
-        document.head.appendChild(notificationStyles);
-
-        // Form validation and enter key support
-        document.addEventListener('DOMContentLoaded', function() {
-            // Load saved movies
-            loadMoviesFromStorage();
-            
-            // Add enter key support for form
-            const formInputs = document.querySelectorAll('#movieTitle, #movieEmoji, #movieDescription, #movieLink');
-            formInputs.forEach(input => {
-                input.addEventListener('keypress', function(e) {
-                    if (e.key<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <title>YeonSeong의 개인 공간</title>
+    <title>YeonSeong Creative Studio</title>
     <style>
         * {
             margin: 0;
@@ -220,29 +13,81 @@
         }
 
         body {
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: #fafafa;
-            color: #2d3748;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0f0f23;
+            color: #e2e8f0;
             line-height: 1.6;
+            overflow-x: hidden;
         }
 
-        /* Header */
-        .header {
+        /* Floating geometric shapes */
+        .bg-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .shape {
+            position: absolute;
+            opacity: 0.1;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .shape:nth-child(1) {
+            top: 10%;
+            left: 10%;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 20px;
+            animation-delay: 0s;
+        }
+
+        .shape:nth-child(2) {
+            top: 60%;
+            right: 15%;
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, #f093fb, #f5576c);
+            border-radius: 50%;
+            animation-delay: 2s;
+        }
+
+        .shape:nth-child(3) {
+            bottom: 20%;
+            left: 20%;
+            width: 60px;
+            height: 120px;
+            background: linear-gradient(45deg, #4facfe, #00f2fe);
+            border-radius: 30px;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(180deg); }
+        }
+
+        /* Navigation */
+        .nav {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             z-index: 1000;
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(15, 15, 35, 0.8);
             backdrop-filter: blur(20px);
-            border-bottom: 1px solid #e2e8f0;
-            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .nav {
+        .nav-container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 2rem;
+            padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -251,7 +96,10 @@
         .logo {
             font-size: 1.5rem;
             font-weight: 700;
-            color: #4a5568;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .nav-menu {
@@ -261,18 +109,32 @@
         }
 
         .nav-link {
-            color: #718096;
+            color: #94a3b8;
             text-decoration: none;
             font-weight: 500;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
             transition: all 0.3s ease;
+            position: relative;
         }
 
         .nav-link:hover,
         .nav-link.active {
-            color: #4299e1;
-            background: #ebf8ff;
+            color: #667eea;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 100%;
         }
 
         /* Main content */
@@ -283,468 +145,16 @@
 
         .section {
             display: none;
-            padding: 3rem 2rem;
+            min-height: 100vh;
+            padding: 4rem 2rem;
         }
 
         .section.active {
             display: block;
-            animation: fadeIn 0.5s ease-in;
+            animation: fadeInUp 0.6s ease-out;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        /* Home section */
-        .hero {
-            text-align: center;
-            padding: 5rem 0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-radius: 20px;
-            margin: 2rem 0;
-        }
-
-        .hero h1 {
-            font-size: 3rem;
-            font-weight: 800;
-            margin-bottom: 1rem;
-        }
-
-        .hero p {
-            font-size: 1.3rem;
-            opacity: 0.9;
-            max-width: 600px;
-            margin: 0 auto 2rem;
-        }
-
-        .intro-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .intro-card {
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e2e8f0;
-        }
-
-        .intro-card h3 {
-            color: #2d3748;
-            margin-bottom: 1rem;
-            font-size: 1.2rem;
-        }
-
-        .intro-card p {
-            color: #718096;
-            line-height: 1.6;
-        }
-
-        /* Travel section */
-        .travel-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 2rem;
-            margin-top: 2rem;
-        }
-
-        .travel-card {
-            background: white;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-        }
-
-        .travel-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-        }
-
-        .travel-image {
-            height: 200px;
-            background: linear-gradient(45deg, #ff9a9e, #fecfef);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3rem;
-        }
-
-        .travel-content {
-            padding: 1.5rem;
-        }
-
-        .travel-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: #2d3748;
-        }
-
-        .travel-date {
-            color: #4299e1;
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-        }
-
-        .travel-description {
-            color: #718096;
-            line-height: 1.6;
-        }
-
-        /* Recipe section */
-        .recipe-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-
-        .recipe-card {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            border-left: 4px solid #48bb78;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        }
-
-        .recipe-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #2d3748;
-            margin-bottom: 0.5rem;
-        }
-
-        .recipe-time {
-            color: #48bb78;
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-        }
-
-        .recipe-ingredients {
-            margin-bottom: 1rem;
-        }
-
-        .recipe-ingredients h4 {
-            font-size: 1rem;
-            color: #4a5568;
-            margin-bottom: 0.5rem;
-        }
-
-        .ingredient-list {
-            list-style: none;
-            padding-left: 1rem;
-        }
-
-        .ingredient-list li {
-            color: #718096;
-            margin-bottom: 0.25rem;
-            position: relative;
-        }
-
-        .ingredient-list li::before {
-            content: '•';
-            color: #48bb78;
-            position: absolute;
-            left: -1rem;
-        }
-
-        /* Books section */
-        .books-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 2rem;
-        }
-
-        .book-card {
-            background: white;
-            border-radius: 12px;
-            padding: 2rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e2e8f0;
-            position: relative;
-        }
-
-        .book-cover {
-            width: 80px;
-            height: 120px;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 2rem;
-        }
-
-        .book-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #2d3748;
-            margin-bottom: 0.5rem;
-        }
-
-        .book-author {
-            color: #4299e1;
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-        }
-
-        .book-review {
-            color: #718096;
-            line-height: 1.6;
-            font-style: italic;
-        }
-
-        .rating {
-            margin-top: 1rem;
-            color: #fbbf24;
-        }
-
-        /* Fitness section */
-        .fitness-dashboard {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-top: 2rem;
-        }
-
-        .fitness-card {
-            background: white;
-            border-radius: 16px;
-            padding: 2rem;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e2e8f0;
-        }
-
-        .fitness-icon {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(45deg, #48bb78, #38a169);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            color: white;
-            margin: 0 auto 1rem;
-        }
-
-        .fitness-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #2d3748;
-            margin-bottom: 0.5rem;
-        }
-
-        .fitness-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #48bb78;
-            margin-bottom: 0.5rem;
-        }
-
-        .fitness-unit {
-            color: #718096;
-            font-size: 0.9rem;
-        }
-
-        .workout-log {
-            background: #f7fafc;
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-top: 2rem;
-        }
-
-        .workout-entry {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem;
-            background: white;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        }
-
-        .workout-name {
-            font-weight: 500;
-            color: #2d3748;
-        }
-
-        .workout-duration {
-            color: #48bb78;
-            font-size: 0.9rem;
-        }
-
-        /* Section titles */
-        .section-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: 1rem;
-            color: #2d3748;
-        }
-
-        .section-subtitle {
-            text-align: center;
-            color: #718096;
-            font-size: 1.1rem;
-            margin-bottom: 3rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        /* Add movie form styles */
-        .add-movie-form {
-            background: white;
-            border-radius: 16px;
-            padding: 2rem;
-            margin-bottom: 3rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e2e8f0;
-        }
-
-        .add-movie-form h3 {
-            color: #2d3748;
-            margin-bottom: 1.5rem;
-            font-size: 1.3rem;
-            font-weight: 600;
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-group.full-width {
-            grid-column: 1 / -1;
-        }
-
-        .form-group label {
-            color: #4a5568;
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-        }
-
-        .form-group input,
-        .form-group textarea {
-            padding: 0.75rem;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            font-family: inherit;
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        .add-movie-btn {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            padding: 0.75rem 2rem;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: inherit;
-        }
-
-        .add-movie-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
-        }
-
-        .add-movie-btn:active {
-            transform: translateY(0);
-        }
-
-        /* Delete button styles */
-        .delete-btn {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: rgba(255, 99, 99, 0.1);
-            border: 1px solid rgba(255, 99, 99, 0.3);
-            color: #e53e3e;
-            border-radius: 6px;
-            padding: 0.5rem;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-            opacity: 0;
-        }
-
-        .movie-item {
-            position: relative;
-        }
-
-        .movie-item:hover .delete-btn {
-            opacity: 1;
-        }
-
-        .delete-btn:hover {
-            background: rgba(255, 99, 99, 0.2);
-            transform: scale(1.1);
-        }
-
-        /* Movie list styles */
-        .movie-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 2rem;
-            justify-content: center;
-            margin-top: 2rem;
-        }
-
-        .movie-item {
-            background: white;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            cursor: pointer;
-            max-width: 500px;
-            width: 100%;
-            border: 1px solid #e2e8f0;
-            animation: slideInUp 0.5s ease-out;
-        }
-
-        @keyframes slideInUp {
+        @keyframes fadeInUp {
             from {
                 opacity: 0;
                 transform: translateY(30px);
@@ -755,80 +165,423 @@
             }
         }
 
-        .movie-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
-        .movie-poster {
+        /* Hero section */
+        .hero {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            min-height: 80vh;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            background-size: 200% 200%;
+            animation: gradientMove 3s ease infinite;
+        }
+
+        @keyframes gradientMove {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            color: #94a3b8;
+            margin-bottom: 3rem;
+            max-width: 600px;
+        }
+
+        .hero-skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .skill-tag {
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            color: #667eea;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* Creative works grid */
+        .works-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .work-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .work-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .work-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+
+        .work-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .work-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .work-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #e2e8f0;
+        }
+
+        .work-description {
+            color: #94a3b8;
+            line-height: 1.6;
+        }
+
+        /* Film showcase */
+        .film-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .film-card {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(240, 147, 251, 0.1));
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+
+        .film-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.2);
+        }
+
+        .film-poster {
             height: 200px;
             background: linear-gradient(45deg, #667eea, #764ba2);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 4rem;
-            color: white;
+            font-size: 3rem;
+            position: relative;
         }
 
-        .movie-content {
-            padding: 2rem;
+        .film-info {
+            padding: 1.5rem;
         }
 
-        .movie-title {
-            font-size: 1.5rem;
+        .film-title {
+            font-size: 1.2rem;
             font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #e2e8f0;
+        }
+
+        .film-genre {
+            color: #667eea;
+            font-size: 0.9rem;
             margin-bottom: 1rem;
-            color: #2d3748;
         }
 
-        .movie-description {
-            color: #718096;
-            line-height: 1.6;
-            margin-bottom: 1.5rem;
+        .film-summary {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            line-height: 1.5;
         }
 
-        .movie-link {
-            display: inline-block;
-            background: linear-gradient(45deg, #667eea, #764ba2);
+        /* Visual gallery */
+        .gallery-container {
+            position: relative;
+            height: 500px;
+            border-radius: 20px;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.5);
+            margin: 2rem 0;
+        }
+
+        .gallery-slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb);
+            opacity: 0;
+            transition: all 0.8s ease;
+            font-size: 2rem;
+            font-weight: 700;
             color: white;
-            text-decoration: none;
+        }
+
+        .gallery-slide.active {
+            opacity: 1;
+        }
+
+        .gallery-nav {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 1rem;
+        }
+
+        .gallery-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
             padding: 0.75rem 1.5rem;
-            border-radius: 8px;
+            border-radius: 25px;
+            cursor: pointer;
             font-weight: 500;
             transition: all 0.3s ease;
-            margin-right: 1rem;
+            backdrop-filter: blur(10px);
         }
 
-        .movie-link:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        .gallery-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
         }
 
-        .movie-link[href="#"], .movie-link[href=""] {
-            background: #cbd5e0;
-            color: #718096;
-            cursor: not-allowed;
+        /* Music studio */
+        .music-studio {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+            border-radius: 24px;
+            padding: 3rem;
+            text-align: center;
+            margin: 2rem 0;
         }
 
-        .movie-link[href="#"]:hover, .movie-link[href=""]:hover {
-            transform: none;
-            box-shadow: none;
+        .music-display {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 1px solid rgba(102, 126, 234, 0.3);
+        }
+
+        .now-playing {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .music-visualizer {
+            display: flex;
+            justify-content: center;
+            align-items: end;
+            gap: 4px;
+            height: 80px;
+            margin: 2rem 0;
+        }
+
+        .bar {
+            width: 6px;
+            background: linear-gradient(to top, #667eea, #764ba2);
+            border-radius: 3px;
+            animation: musicBar 1.5s ease-in-out infinite alternate;
+        }
+
+        .bar:nth-child(even) {
+            animation-delay: 0.2s;
+        }
+
+        .bar:nth-child(3n) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes musicBar {
+            0% { height: 20px; }
+            100% { height: 60px; }
+        }
+
+        .track-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .track-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .track-item:hover,
+        .track-item.playing {
+            background: rgba(102, 126, 234, 0.1);
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+
+        .track-number {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: white;
+        }
+
+        .track-info h4 {
+            color: #e2e8f0;
+            margin-bottom: 0.25rem;
+        }
+
+        .track-info p {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        /* Interactive playground */
+        .playground {
+            background: linear-gradient(135deg, rgba(240, 147, 251, 0.05), rgba(245, 87, 108, 0.05));
+            border-radius: 24px;
+            padding: 3rem;
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .game-area {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 16px;
+            height: 300px;
+            margin: 2rem auto;
+            max-width: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #94a3b8;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px dashed rgba(102, 126, 234, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-area:hover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .game-stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .stat-box {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1rem 2rem;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        /* Section headers */
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-subtitle {
+            font-size: 1.2rem;
+            color: #94a3b8;
+            max-width: 600px;
+            margin: 0 auto;
         }
 
         /* Responsive design */
         @media (max-width: 768px) {
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .add-movie-form {
-                padding: 1.5rem;
-                margin-bottom: 2rem;
-            }
-
-            .nav {
-                flex-direction: column;
-                gap: 1rem;
+            .nav-container {
+                padding: 1rem;
             }
 
             .nav-menu {
@@ -836,51 +589,51 @@
             }
 
             .hero h1 {
-                font-size: 2rem;
+                font-size: 2.5rem;
             }
 
             .hero p {
-                font-size: 1.1rem;
+                font-size: 1.2rem;
+            }
+
+            .works-grid,
+            .film-showcase {
+                grid-template-columns: 1fr;
             }
 
             .section {
                 padding: 2rem 1rem;
             }
 
-            .intro-grid,
-            .travel-grid,
-            .books-grid,
-            .fitness-dashboard,
-            .movie-list {
-                grid-template-columns: 1fr;
-            }
-
-            .movie-list {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .delete-btn {
-                opacity: 1;
+            .music-studio,
+            .playground {
+                padding: 2rem;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <nav class="nav">
-            <div class="logo">YeonSeong's Life</div>
+    <!-- Background shapes -->
+    <div class="bg-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <div class="logo">YeonSeong</div>
             <ul class="nav-menu">
                 <li><a href="#" class="nav-link active" data-section="home">Home</a></li>
-                <li><a href="#" class="nav-link" data-section="travel">Travel</a></li>
-                <li><a href="#" class="nav-link" data-section="recipes">Recipes</a></li>
-                <li><a href="#" class="nav-link" data-section="books">Books</a></li>
-                <li><a href="#" class="nav-link" data-section="fitness">Fitness</a></li>
-                <li><a href="#" class="nav-link" data-section="thoughts">Thoughts</a></li>
+                <li><a href="#" class="nav-link" data-section="works">Works</a></li>
+                <li><a href="#" class="nav-link" data-section="films">Films</a></li>
+                <li><a href="#" class="nav-link" data-section="visuals">Visuals</a></li>
+                <li><a href="#" class="nav-link" data-section="sounds">Sounds</a></li>
+                <li><a href="#" class="nav-link" data-section="play">Play</a></li>
             </ul>
-        </nav>
-    </header>
+        </div>
+    </nav>
 
     <!-- Main content -->
     <main class="main">
@@ -888,106 +641,127 @@
         <section id="home" class="section active">
             <div class="container">
                 <div class="hero">
-                    <h1>안녕하세요, 연성입니다</h1>
+                    <h1>크리에이티브 개발자</h1>
                     <p>
-                        일상의 소소한 기록들과 새로운 도전들을 
-                        이곳에 차곡차곡 모아가고 있어요
+                        코드와 창의성이 만나는 지점에서 
+                        독특하고 의미있는 디지털 경험을 만들어갑니다
+                    </p>
+                    <div class="hero-skills">
+                        <span class="skill-tag">웹 개발</span>
+                        <span class="skill-tag">UI/UX 디자인</span>
+                        <span class="skill-tag">인터랙티브 미디어</span>
+                        <span class="skill-tag">게임 개발</span>
+                        <span class="skill-tag">데이터 시각화</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Works section -->
+        <section id="works" class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">크리에이티브 프로젝트</h2>
+                    <p class="section-subtitle">
+                        기술과 예술이 조화를 이루는 디지털 작품들
+                    </p>
+                </div>
+                
+                <div class="works-grid">
+                    <div class="work-card" onclick="showSection('films')">
+                        <div class="work-icon">🎬</div>
+                        <h3 class="work-title">영화 큐레이션 플랫폼</h3>
+                        <p class="work-description">
+                            개인적으로 감명받은 영화들을 정리하고 
+                            스토리텔링 관점에서 분석한 디지털 아카이브
+                        </p>
+                    </div>
+
+                    <div class="work-card" onclick="showSection('visuals')">
+                        <div class="work-icon">🎨</div>
+                        <h3 class="work-title">비주얼 갤러리</h3>
+                        <p class="work-description">
+                            창작 과정과 영감의 순간들을 담은 
+                            인터랙티브 비주얼 컬렉션
+                        </p>
+                    </div>
+
+                    <div class="work-card" onclick="showSection('sounds')">
+                        <div class="work-icon">🎵</div>
+                        <h3 class="work-title">사운드 스튜디오</h3>
+                        <p class="work-description">
+                            창작에 영감을 주는 음악들을 선별한 
+                            개인 맞춤형 오디오 플레이어
+                        </p>
+                    </div>
+
+                    <div class="work-card" onclick="showSection('play')">
+                        <div class="work-icon">🎮</div>
+                        <h3 class="work-title">인터랙티브 체험</h3>
+                        <p class="work-description">
+                            웹 기술로 구현한 창의적인 
+                            사용자 참여형 디지털 경험
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Films section -->
+        <section id="films" class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">영화 컬렉션</h2>
+                    <p class="section-subtitle">
+                        창작자로서 영감을 받은 영화들과 그 이유
                     </p>
                 </div>
 
-                <div class="intro-grid">
-                    <div class="intro-card">
-                        <h3>🌏 여행 기록</h3>
-                        <p>
-                            새로운 도시를 탐험하고 만난 사람들, 그리고 그 순간의 감정들을 
-                            사진과 글로 남겨두고 있어요. 작은 골목길부터 유명한 관광지까지!
-                        </p>
-                    </div>
-
-                    <div class="intro-card">
-                        <h3>👨‍🍳 요리 실험</h3>
-                        <p>
-                            집에서 새로운 레시피에 도전하는 걸 좋아해요. 
-                            성공작부터 실패작까지, 요리하며 배운 것들을 기록하고 있습니다.
-                        </p>
-                    </div>
-
-                    <div class="intro-card">
-                        <h3>📚 독서 노트</h3>
-                        <p>
-                            읽은 책들에 대한 솔직한 후기와 인상 깊었던 구절들을 모아두는 공간이에요. 
-                            다양한 장르를 넘나들며 새로운 관점을 얻고 있어요.
-                        </p>
-                    </div>
-
-                    <div class="intro-card">
-                        <h3>💪 건강 관리</h3>
-                        <p>
-                            규칙적인 운동과 건강한 습관 만들기에 도전 중이에요. 
-                            작은 변화들이 모여 큰 성과를 만드는 과정을 공유합니다.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Travel section -->
-        <section id="travel" class="section">
-            <div class="container">
-                <h2 class="section-title">여행 기록</h2>
-                <p class="section-subtitle">
-                    새로운 장소에서 만난 순간들과 경험들
-                </p>
-
-                <div class="travel-grid">
-                    <div class="travel-card">
-                        <div class="travel-image">🏔️</div>
-                        <div class="travel-content">
-                            <h3 class="travel-title">설악산 단풍 여행</h3>
-                            <p class="travel-date">2024년 10월</p>
-                            <p class="travel-description">
-                                가을 단풍이 절정일 때 다녀온 설악산. 케이블카를 타고 올라간 권금성에서 본 풍경이 
-                                정말 장관이었어요. 새벽 일찍 출발해서 권금성까지 다녀오는 코스로 하루 종일 걸었지만 
-                                그만한 가치가 있었던 여행이었습니다.
+                <div class="film-showcase">
+                    <div class="film-card">
+                        <div class="film-poster">🌊</div>
+                        <div class="film-info">
+                            <h3 class="film-title">아바타</h3>
+                            <p class="film-genre">환경 · 기술 · 상상력</p>
+                            <p class="film-summary">
+                                시각적 혁신과 환경 메시지가 조화를 이룬 작품. 
+                                기술이 스토리텔링에 어떻게 기여할 수 있는지 보여준 사례.
                             </p>
                         </div>
                     </div>
 
-                    <div class="travel-card">
-                        <div class="travel-image">🏖️</div>
-                        <div class="travel-content">
-                            <h3 class="travel-title">제주도 올레길 걷기</h3>
-                            <p class="travel-date">2024년 8월</p>
-                            <p class="travel-description">
-                                여름 휴가로 다녀온 제주도에서 올레길 7코스를 걸었어요. 
-                                뜨거운 날씨였지만 바다를 보며 걷는 길이 정말 힐링이 되었습니다. 
-                                중간에 만난 카페에서 마신 아이스 아메리카노가 생각나네요.
+                    <div class="film-card">
+                        <div class="film-poster">💎</div>
+                        <div class="film-info">
+                            <h3 class="film-title">타이타닉</h3>
+                            <p class="film-genre">인간관계 · 감정 · 역사</p>
+                            <p class="film-summary">
+                                시대적 배경과 개인적 드라마의 완벽한 결합. 
+                                사용자 감정을 움직이는 스토리텔링의 힘을 보여줌.
                             </p>
                         </div>
                     </div>
 
-                    <div class="travel-card">
-                        <div class="travel-image">🏛️</div>
-                        <div class="travel-content">
-                            <h3 class="travel-title">경주 역사 탐방</h3>
-                            <p class="travel-date">2024년 5월</p>
-                            <p class="travel-description">
-                                불국사와 석굴암을 중심으로 한 경주 여행. 천년의 역사가 고스란히 남아있는 
-                                유적지들을 보며 우리나라의 찬란한 문화유산에 대해 다시 한번 생각해보게 되었어요. 
-                                첨성대에서 본 별하늘도 잊을 수 없습니다.
+                    <div class="film-card">
+                        <div class="film-poster">⚡</div>
+                        <div class="film-info">
+                            <h3 class="film-title">어벤져스: 엔드게임</h3>
+                            <p class="film-genre">협업 · 완결성 · 팬덤</p>
+                            <p class="film-summary">
+                                여러 스토리라인을 하나로 엮어낸 구조적 완성도. 
+                                사용자 경험 설계에서 배울 점이 많은 작품.
                             </p>
                         </div>
                     </div>
 
-                    <div class="travel-card">
-                        <div class="travel-image">🗺️</div>
-                        <div class="travel-content">
-                            <h3 class="travel-title">다음 여행 계획</h3>
-                            <p class="travel-date">2025년 예정</p>
-                            <p class="travel-description">
-                                다음에는 강원도 정동진에서 일출을 보거나, 
-                                전주 한옥마을에서 전통문화를 체험해보고 싶어요. 
-                                새로운 곳에서 만날 경험들이 벌써부터 기대됩니다!
+                    <div class="film-card">
+                        <div class="film-poster">✨</div>
+                        <div class="film-info">
+                            <h3 class="film-title">앞으로의 발견</h3>
+                            <p class="film-genre">탐험 · 성장 · 미래</p>
+                            <p class="film-summary">
+                                계속해서 새로운 영화들을 발견하고 
+                                창작 영감으로 연결해나가는 여정.
                             </p>
                         </div>
                     </div>
@@ -995,291 +769,123 @@
             </div>
         </section>
 
-        <!-- Recipes section -->
-        <section id="recipes" class="section">
+        <!-- Visuals section -->
+        <section id="visuals" class="section">
             <div class="container">
-                <h2 class="section-title">요리 실험실</h2>
-                <p class="section-subtitle">
-                    집에서 시도해본 레시피들과 요리 노하우
-                </p>
+                <div class="section-header">
+                    <h2 class="section-title">비주얼 여정</h2>
+                    <p class="section-subtitle">
+                        창작 과정과 영감의 순간들
+                    </p>
+                </div>
 
-                <div class="recipe-container">
-                    <div class="recipe-card">
-                        <h3 class="recipe-title">간단한 김치볶음밥</h3>
-                        <p class="recipe-time">⏱️ 15분</p>
-                        <div class="recipe-ingredients">
-                            <h4>재료</h4>
-                            <ul class="ingredient-list">
-                                <li>밥 2공기</li>
-                                <li>김치 1/2포기</li>
-                                <li>스팸 1/2캔</li>
-                                <li>계란 2개</li>
-                                <li>참기름, 김가루</li>
-                            </ul>
-                        </div>
-                        <p style="color: #718096; font-size: 0.9rem;">
-                            김치가 너무 셀 때는 설탕을 조금 넣으면 맛이 부드러워져요!
-                        </p>
-                    </div>
+                <div class="gallery-container">
+                    <div class="gallery-slide active">창의적 아이디어 스케치</div>
+                    <div class="gallery-slide">프로토타입 개발 과정</div>
+                    <div class="gallery-slide">사용자 테스트 순간들</div>
+                    <div class="gallery-slide">완성된 프로젝트 결과</div>
+                    <div class="gallery-slide">다음 도전을 위한 준비</div>
 
-                    <div class="recipe-card">
-                        <h3 class="recipe-title">수제 토마토 파스타</h3>
-                        <p class="recipe-time">⏱️ 25분</p>
-                        <div class="recipe-ingredients">
-                            <h4>재료</h4>
-                            <ul class="ingredient-list">
-                                <li>스파게티면 200g</li>
-                                <li>토마토 3개</li>
-                                <li>양파 1/2개</li>
-                                <li>마늘 3쪽</li>
-                                <li>올리브오일, 바질</li>
-                            </ul>
-                        </div>
-                        <p style="color: #718096; font-size: 0.9rem;">
-                            토마토를 으깨면서 볶으면 더 진한 맛이 나요. 파르메산 치즈 추가는 필수!
-                        </p>
-                    </div>
-
-                    <div class="recipe-card">
-                        <h3 class="recipe-title">홈메이드 팬케이크</h3>
-                        <p class="recipe-time">⏱️ 20분</p>
-                        <div class="recipe-ingredients">
-                            <h4>재료</h4>
-                            <ul class="ingredient-list">
-                                <li>박력분 1컵</li>
-                                <li>우유 3/4컵</li>
-                                <li>계란 1개</li>
-                                <li>설탕 2큰술</li>
-                                <li>베이킹파우더 1작은술</li>
-                            </ul>
-                        </div>
-                        <p style="color: #718096; font-size: 0.9rem;">
-                            반죽을 너무 많이 젓지 말고, 약한 불에서 천천히 구우면 완벽해요!
-                        </p>
-                    </div>
-
-                    <div class="recipe-card">
-                        <h3 class="recipe-title">시원한 냉면</h3>
-                        <p class="recipe-time">⏱️ 30분</p>
-                        <div class="recipe-ingredients">
-                            <h4>재료</h4>
-                            <ul class="ingredient-list">
-                                <li>냉면 2인분</li>
-                                <li>동치미 국물 2컵</li>
-                                <li>사과 1/2개</li>
-                                <li>삶은달걀 2개</li>
-                                <li>오이, 배, 무</li>
-                            </ul>
-                        </div>
-                        <p style="color: #718096; font-size: 0.9rem;">
-                            육수가 핵심! 사골육수에 동치미 국물을 섞으면 깔끔하고 시원해요.
-                        </p>
+                    <div class="gallery-nav">
+                        <button class="gallery-btn" onclick="changeSlide(-1)">← 이전</button>
+                        <button class="gallery-btn" onclick="toggleAutoSlide()">⏸️ 일시정지</button>
+                        <button class="gallery-btn" onclick="changeSlide(1)">다음 →</button>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Books section -->
-        <section id="books" class="section">
+        <!-- Sounds section -->
+        <section id="sounds" class="section">
             <div class="container">
-                <h2 class="section-title">독서 기록</h2>
-                <p class="section-subtitle">
-                    읽은 책들에 대한 솔직한 후기와 감상
-                </p>
+                <div class="section-header">
+                    <h2 class="section-title">사운드 스튜디오</h2>
+                    <p class="section-subtitle">
+                        창작과 집중을 위한 개인 음악 컬렉션
+                    </p>
+                </div>
 
-                <div class="books-grid">
-                    <div class="book-card">
-                        <div class="book-cover">📖</div>
-                        <h3 class="book-title">어떻게 살 것인가</h3>
-                        <p class="book-author">유시민</p>
-                        <p class="book-review">
-                            "인생에서 정말 중요한 것들에 대해 생각해보게 만드는 책이었어요. 
-                            특히 '행복한 삶이란 무엇인가'에 대한 부분이 깊이 와닿았습니다. 
-                            저자의 솔직하고 따뜻한 문체가 마음을 편안하게 해주네요."
-                        </p>
-                        <div class="rating">⭐⭐⭐⭐⭐</div>
+                <div class="music-studio">
+                    <div class="music-display">
+                        <div class="now-playing" id="nowPlaying">음악을 선택해주세요</div>
+                        <div class="music-visualizer">
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                        </div>
                     </div>
 
-                    <div class="book-card">
-                        <div class="book-cover">💡</div>
-                        <h3 class="book-title">습관의 힘</h3>
-                        <p class="book-author">찰스 두히그</p>
-                        <p class="book-review">
-                            "작은 습관이 어떻게 인생을 바꿀 수 있는지 과학적으로 설명한 책. 
-                            습관 고리에 대한 개념이 특히 유용했어요. 이 책을 읽고 나서 
-                            실제로 운동 습관을 만들 수 있었습니다!"
-                        </p>
-                        <div class="rating">⭐⭐⭐⭐⭐</div>
-                    </div>
+                    <div class="track-grid">
+                        <div class="track-item" onclick="playTrack('집중력 향상을 위한 클래식', '01')">
+                            <div class="track-number">01</div>
+                            <div class="track-info">
+                                <h4>집중력 향상을 위한 클래식</h4>
+                                <p>코딩할 때 듣는 음악</p>
+                            </div>
+                        </div>
 
-                    <div class="book-card">
-                        <div class="book-cover">🎨</div>
-                        <h3 class="book-title">미드나잇 라이브러리</h3>
-                        <p class="book-author">매트 헤이그</p>
-                        <p class="book-review">
-                            "인생의 다양한 가능성들에 대해 상상해볼 수 있는 판타지 소설. 
-                            '만약 다른 선택을 했다면?'이라는 질문에 대한 아름다운 답변이었어요. 
-                            읽으면서 울컥했던 순간들이 많았습니다."
-                        </p>
-                        <div class="rating">⭐⭐⭐⭐</div>
-                    </div>
+                        <div class="track-item" onclick="playTrack('창의적 영감을 주는 비트', '02')">
+                            <div class="track-number">02</div>
+                            <div class="track-info">
+                                <h4>창의적 영감을 주는 비트</h4>
+                                <p>아이디어 회의 시간</p>
+                            </div>
+                        </div>
 
-                    <div class="book-card">
-                        <div class="book-cover">📚</div>
-                        <h3 class="book-title">현재 읽고 있는 책</h3>
-                        <p class="book-author">다양한 작가들</p>
-                        <p class="book-review">
-                            "지금은 '사피엔스'와 '코스모스'를 번갈아 읽고 있어요. 
-                            인문학과 과학을 함께 읽으니까 더 재미있는 것 같아요. 
-                            다음에는 어떤 책을 읽을지 벌써 고민 중입니다!"
-                        </p>
-                        <div class="rating">📖 읽는 중...</div>
+                        <div class="track-item" onclick="playTrack('꿈을 향한 여정의 사운드트랙', '03')">
+                            <div class="track-number">03</div>
+                            <div class="track-info">
+                                <h4>꿈을 향한 여정의 사운드트랙</h4>
+                                <p>동기부여가 필요할 때</p>
+                            </div>
+                        </div>
+
+                        <div class="track-item" onclick="playTrack('팀워크와 협업의 하모니', '04')">
+                            <div class="track-number">04</div>
+                            <div class="track-info">
+                                <h4>팀워크와 협업의 하모니</h4>
+                                <p>프로젝트 완성을 위한 에너지</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Fitness section -->
-        <section id="fitness" class="section">
+        <!-- Play section -->
+        <section id="play" class="section">
             <div class="container">
-                <h2 class="section-title">건강 관리</h2>
-                <p class="section-subtitle">
-                    꾸준한 운동과 건강한 습관 만들기
-                </p>
-
-                <div class="fitness-dashboard">
-                    <div class="fitness-card">
-                        <div class="fitness-icon">🏃‍♂️</div>
-                        <h3 class="fitness-title">이번 주 걸음 수</h3>
-                        <div class="fitness-value">47,382</div>
-                        <div class="fitness-unit">걸음</div>
-                    </div>
-
-                    <div class="fitness-card">
-                        <div class="fitness-icon">💪</div>
-                        <h3 class="fitness-title">운동한 날</h3>
-                        <div class="fitness-value">4</div>
-                        <div class="fitness-unit">일 / 주</div>
-                    </div>
-
-                    <div class="fitness-card">
-                        <div class="fitness-icon">⏰</div>
-                        <h3 class="fitness-title">총 운동 시간</h3>
-                        <div class="fitness-value">5.5</div>
-                        <div class="fitness-unit">시간</div>
-                    </div>
-
-                    <div class="fitness-card">
-                        <div class="fitness-icon">🎯</div>
-                        <h3 class="fitness-title">목표 달성률</h3>
-                        <div class="fitness-value">78%</div>
-                        <div class="fitness-unit">완료</div>
-                    </div>
+                <div class="section-header">
+                    <h2 class="section-title">인터랙티브 플레이그라운드</h2>
+                    <p class="section-subtitle">
+                        재미있는 상호작용을 통한 창의적 실험
+                    </p>
                 </div>
 
-                <div class="workout-log">
-                    <h3 style="margin-bottom: 1rem; color: #2d3748;">이번 주 운동 기록</h3>
-                    
-                    <div class="workout-entry">
-                        <span class="workout-name">🏃‍♂️ 조깅 (한강공원)</span>
-                        <span class="workout-duration">45분</span>
+                <div class="playground">
+                    <div class="game-area" id="gameArea" onclick="startCreativeGame()">
+                        <span>🎯 클릭하여 창의력 테스트 시작!</span>
                     </div>
 
-                    <div class="workout-entry">
-                        <span class="workout-name">💪 홈트레이닝 (상체)</span>
-                        <span class="workout-duration">30분</span>
-                    </div>
-
-                    <div class="workout-entry">
-                        <span class="workout-name">🧘‍♂️ 요가 스트레칭</span>
-                        <span class="workout-duration">20분</span>
-                    </div>
-
-                    <div class="workout-entry">
-                        <span class="workout-name">🚴‍♂️ 실내 자전거</span>
-                        <span class="workout-duration">40분</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Thoughts section -->
-        <section id="thoughts" class="section">
-            <div class="container">
-                <h2 class="section-title">영화 소개</h2>
-                <p class="section-subtitle">
-                    감명깊게 본 영화들과 그 이야기
-                </p>
-
-                <!-- Add movie form -->
-                <div class="add-movie-form">
-                    <h3>새 영화 추가하기</h3>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="movieTitle">영화 제목</label>
-                            <input type="text" id="movieTitle" placeholder="영화 제목을 입력하세요">
+                    <div class="game-stats">
+                        <div class="stat-box">
+                            <div class="stat-value" id="scoreValue">0</div>
+                            <div class="stat-label">창의점수</div>
                         </div>
-                        <div class="form-group">
-                            <label for="movieEmoji">이모지</label>
-                            <input type="text" id="movieEmoji" placeholder="🎬" maxlength="2">
+                        <div class="stat-box">
+                            <div class="stat-value" id="levelValue">1</div>
+                            <div class="stat-label">레벨</div>
                         </div>
-                        <div class="form-group full-width">
-                            <label for="movieDescription">영화 줄거리</label>
-                            <textarea id="movieDescription" placeholder="영화의 줄거리나 감상평을 작성해주세요..." rows="4"></textarea>
-                        </div>
-                        <div class="form-group full-width">
-                            <label for="movieLink">관련 링크 (선택사항)</label>
-                            <input type="url" id="movieLink" placeholder="https://example.com">
-                        </div>
-                    </div>
-                    <button onclick="addMovie()" class="add-movie-btn">🎬 영화 추가하기</button>
-                </div>
-
-                <div class="movie-list" id="movieList">
-                    <div class="movie-item">
-                        <div class="movie-poster">🌊</div>
-                        <div class="movie-content">
-                            <h3 class="movie-title">아바타</h3>
-                            <p class="movie-description">
-                                <b>영화 줄거리:</b> 21세기 중반, 지구의 리소스 고갈로 죽어가는 상황에서 
-                                인류는 외계 행성인 판도라에 정착을 시도하며, 아름다운 자연과 황금 나비의 
-                                나라로 가득한 이 행성에서 전투 중 다친 형사 제이크 소울리가 자신의 쌍둥이 
-                                동생의 연구를 이어받아 판도라의 나비족과의 군대 갈등, 갈등의 격화와 함께 
-                                나비족과의 화해와 희망을 찾는 과정을 그린, 환경 보호와 다양성, 평화를 
-                                강조하는 영화 "아바타"입니다.
-                            </p>
-                            <a class="movie-link" href="https://namu.wiki/w/%EC%95%84%EB%B0%94%ED%83%80(%EC%98%81%ED%99%94)" target="_blank">
-                                자세히 보기
-                            </a>
-                            <button class="delete-btn" onclick="deleteMovie(this)">🗑️</button>
-                        </div>
-                    </div>
-
-                    <div class="movie-item">
-                        <div class="movie-poster">🚢</div>
-                        <div class="movie-content">
-                            <h3 class="movie-title">타이타닉</h3>
-                            <p class="movie-description">
-                                <b>영화 줄거리:</b> "타이타닉"은 1912년에 침몰한 타이타닉호를 배경으로, 상류층 소녀 로즈와 빈민층 예술가 잭의 사랑 이야기를 그리며, 유적에서 로즈의 노래와 함께 84세에 생을 마치는 그녀의 추억을 되새기는 현대의 노인 로즈의 이야기를 담은 감동적인 로맨스 영화입니다.
-                            </p>
-                            <a class="movie-link" href="https://namu.wiki/w/%ED%83%80%EC%9D%B4%ED%83%80%EB%8B%89(%EC%98%81%ED%99%94)" target="_blank">
-                                자세히 보기
-                            </a>
-                            <button class="delete-btn" onclick="deleteMovie(this)">🗑️</button>
-                        </div>
-                    </div>
-
-                    <div class="movie-item">
-                        <div class="movie-poster">⚡</div>
-                        <div class="movie-content">
-                            <h3 class="movie-title">어벤져스 - 엔드게임</h3>
-                            <p class="movie-description">
-                                <b>영화 줄거리:</b> "어벤져스: 엔드게임"은 타노스의 손에서 인피니티 스톤을 되찾기 위해 어벤져스가 과거로 시간여행하고, 히어로들의 희생과 전쟁을 거치며 최종 전투에서 타노스를 물리치고, 토니 스타크가 인피니티 건틀릿을 사용해 자신을 포함한 삶을 희생하며 모든 것을 종결하는 과정을 다룬 마블 시네마틱 유니버스의 대미를 장식한 에픽한 슈퍼히어로 영화입니다.
-                            </p>
-                            <a class="movie-link" href="https://namu.wiki/w/%EC%96%B4%EB%B2%A4%EC%A0%B8%EC%8A%A4:%20%EC%97%94%EB%93%9C%EA%B2%8C%EC%9E%84" target="_blank">
-                                자세히 보기
-                            </a>
-                            <button class="delete-btn" onclick="deleteMovie(this)">🗑️</button>
+                        <div class="stat-box">
+                            <div class="stat-value" id="timeValue">00:00</div>
+                            <div class="stat-label">플레이시간</div>
                         </div>
                     </div>
                 </div>
@@ -1293,13 +899,16 @@
         const sections = document.querySelectorAll('.section');
 
         function showSection(sectionId) {
+            // Remove active class from all sections and nav links
             sections.forEach(section => section.classList.remove('active'));
             navLinks.forEach(link => link.classList.remove('active'));
 
+            // Add active class to target section and nav link
             document.getElementById(sectionId).classList.add('active');
             document.querySelector(`[data-section="${sectionId}"]`).classList.add('active');
         }
 
+        // Add click listeners to nav links
         navLinks.forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -1308,255 +917,255 @@
             });
         });
 
-            formInputs.forEach(input => {
-                input.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter' && e.ctrlKey) {
-                        addMovie();
+        // Gallery functionality
+        let currentSlideIndex = 0;
+        let isAutoSliding = true;
+        let slideInterval;
+
+        const slides = document.querySelectorAll('.gallery-slide');
+
+        function changeSlide(direction) {
+            slides[currentSlideIndex].classList.remove('active');
+            
+            currentSlideIndex += direction;
+            if (currentSlideIndex >= slides.length) currentSlideIndex = 0;
+            if (currentSlideIndex < 0) currentSlideIndex = slides.length - 1;
+            
+            slides[currentSlideIndex].classList.add('active');
+        }
+
+        function startAutoSlide() {
+            slideInterval = setInterval(() => {
+                changeSlide(1);
+            }, 4000);
+        }
+
+        function toggleAutoSlide() {
+            const btn = event.target;
+            if (isAutoSliding) {
+                clearInterval(slideInterval);
+                btn.textContent = '▶️ 재생';
+                isAutoSliding = false;
+            } else {
+                startAutoSlide();
+                btn.textContent = '⏸️ 일시정지';
+                isAutoSliding = true;
+            }
+        }
+
+        // Music player functionality
+        let currentTrack = null;
+
+        function playTrack(trackName, trackNumber) {
+            const nowPlaying = document.getElementById('nowPlaying');
+            const trackItems = document.querySelectorAll('.track-item');
+            
+            // Remove playing class from all tracks
+            trackItems.forEach(item => item.classList.remove('playing'));
+            
+            // Add playing class to clicked track
+            event.currentTarget.classList.add('playing');
+            
+            // Update now playing display
+            nowPlaying.textContent = `${trackNumber}. ${trackName}`;
+            currentTrack = trackName;
+
+            // Animate visualizer
+            const bars = document.querySelectorAll('.bar');
+            bars.forEach(bar => {
+                bar.style.animationPlayState = 'running';
+            });
+        }
+
+        // Creative game functionality
+        let gameActive = false;
+        let gameScore = 0;
+        let gameLevel = 1;
+        let gameStartTime;
+        let gameTimer;
+
+        function startCreativeGame() {
+            if (gameActive) return;
+
+            gameActive = true;
+            gameScore = 0;
+            gameLevel = 1;
+            gameStartTime = Date.now();
+
+            const gameArea = document.getElementById('gameArea');
+            gameArea.innerHTML = '<span style="font-size: 1rem;">창의적인 색상 조합을 클릭하세요!</span>';
+            
+            // Start timer
+            gameTimer = setInterval(updateTimer, 1000);
+            
+            // Start spawning color combinations
+            spawnColorChallenge();
+        }
+
+        function spawnColorChallenge() {
+            if (!gameActive) return;
+
+            const gameArea = document.getElementById('gameArea');
+            const colors = ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe', '#00f2fe'];
+            
+            // Clear previous challenge
+            gameArea.innerHTML = '';
+            
+            // Create color combination challenge
+            for (let i = 0; i < 3; i++) {
+                const colorBox = document.createElement('div');
+                colorBox.style.cssText = `
+                    width: 80px;
+                    height: 80px;
+                    background: ${colors[Math.floor(Math.random() * colors.length)]};
+                    border-radius: 12px;
+                    margin: 10px;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    display: inline-block;
+                `;
+                
+                colorBox.addEventListener('click', () => {
+                    gameScore += 10 * gameLevel;
+                    updateScore();
+                    
+                    // Level up every 50 points
+                    if (gameScore % 50 === 0) {
+                        gameLevel++;
+                        updateLevel();
+                    }
+                    
+                    // Spawn next challenge
+                    setTimeout(spawnColorChallenge, 500);
+                });
+                
+                colorBox.addEventListener('mouseenter', () => {
+                    colorBox.style.transform = 'scale(1.1)';
+                    colorBox.style.boxShadow = '0 10px 20px rgba(0,0,0,0.3)';
+                });
+                
+                colorBox.addEventListener('mouseleave', () => {
+                    colorBox.style.transform = 'scale(1)';
+                    colorBox.style.boxShadow = 'none';
+                });
+                
+                gameArea.appendChild(colorBox);
+            }
+            
+            // Auto-refresh after 3 seconds if no click
+            setTimeout(() => {
+                if (gameActive && gameArea.children.length > 0) {
+                    spawnColorChallenge();
+                }
+            }, 3000);
+        }
+
+        function updateScore() {
+            document.getElementById('scoreValue').textContent = gameScore;
+        }
+
+        function updateLevel() {
+            document.getElementById('levelValue').textContent = gameLevel;
+        }
+
+        function updateTimer() {
+            if (!gameActive) return;
+            
+            const elapsed = Date.now() - gameStartTime;
+            const minutes = Math.floor(elapsed / 60000);
+            const seconds = Math.floor((elapsed % 60000) / 1000);
+            
+            document.getElementById('timeValue').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Initialize auto-slide when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            startAutoSlide();
+            
+            // Add smooth scrolling for better UX
+            document.documentElement.style.scrollBehavior = 'smooth';
+            
+            // Add intersection observer for animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animationDelay = '0s';
+                        entry.target.style.animation = 'fadeInUp 0.6s ease-out forwards';
+                    }
+                });
+            }, observerOptions);
+            
+            // Observe all work cards and film cards
+            document.querySelectorAll('.work-card, .film-card').forEach(card => {
+                observer.observe(card);
+            });
+        });
+
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && gameActive) {
+                gameActive = false;
+                clearInterval(gameTimer);
+                document.getElementById('gameArea').innerHTML = '<span>🎯 클릭하여 창의력 테스트 시작!</span>';
+            }
+        });
+
+        // Mobile touch support
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            if (!e.changedTouches) return;
+            
+            const touchEndX = e.changedTouches[0].clientX;
+            const touchEndY = e.changedTouches[0].clientY;
+            const diffX = touchStartX - touchEndX;
+            const diffY = touchStartY - touchEndY;
+            
+            // Only trigger on gallery section
+            if (document.getElementById('visuals').classList.contains('active')) {
+                if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+                    if (diffX > 0) {
+                        changeSlide(1); // Swipe left, next slide
+                    } else {
+                        changeSlide(-1); // Swipe right, previous slide
+                    }
+                }
+            }
+        });
+
+        // Performance optimization - lazy loading
+        const lazyElements = document.querySelectorAll('.work-card, .film-card, .track-item');
+        
+        if ('IntersectionObserver' in window) {
+            const lazyObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                        lazyObserver.unobserve(entry.target);
                     }
                 });
             });
             
-            // URL validation
-            const linkInput = document.getElementById('movieLink');
-            linkInput.addEventListener('blur', function() {
-                const url = this.value.trim();
-                if (url && !isValidUrl(url)) {
-                    this.style.borderColor = '#e53e3e';
-                    showNotification('올바른 URL 형식을 입력해주세요 (예: https://example.com)');
-                } else {
-                    this.style.borderColor = '#e2e8f0';
-                }
-            });
-            
-            // Auto-save draft
-            const titleInput = document.getElementById('movieTitle');
-            const descInput = document.getElementById('movieDescription');
-            
-            [titleInput, descInput].forEach(input => {
-                input.addEventListener('input', function() {
-                    const draft = {
-                        title: titleInput.value,
-                        emoji: document.getElementById('movieEmoji').value,
-                        description: descInput.value,
-                        link: document.getElementById('movieLink').value
-                    };
-                    localStorage.setItem('movieDraft', JSON.stringify(draft));
-                });
-            });
-            
-            // Load draft
-            const savedDraft = localStorage.getItem('movieDraft');
-            if (savedDraft) {
-                const draft = JSON.parse(savedDraft);
-                document.getElementById('movieTitle').value = draft.title || '';
-                document.getElementById('movieEmoji').value = draft.emoji || '';
-                document.getElementById('movieDescription').value = draft.description || '';
-                document.getElementById('movieLink').value = draft.link || '';
-            }
-        });
-
-        // URL validation function
-        function isValidUrl(string) {
-            try {
-                new URL(string);
-                return true;
-            } catch (_) {
-                return false;
-            }
-        }
-
-        // Clear draft when movie is added
-        function addMovie() {
-            const title = document.getElementById('movieTitle').value.trim();
-            const emoji = document.getElementById('movieEmoji').value.trim() || '🎬';
-            const description = document.getElementById('movieDescription').value.trim();
-            const link = document.getElementById('movieLink').value.trim();
-
-            if (!title || !description) {
-                alert('영화 제목과 줄거리를 입력해주세요!');
-                return;
-            }
-
-            // Validate URL if provided
-            if (link && !isValidUrl(link)) {
-                alert('올바른 URL 형식을 입력해주세요!');
-                return;
-            }
-
-            // Create new movie item
-            const movieList = document.getElementById('movieList');
-            const movieItem = document.createElement('div');
-            movieItem.className = 'movie-item';
-            
-            movieItem.innerHTML = `
-                <div class="movie-poster">${emoji}</div>
-                <div class="movie-content">
-                    <h3 class="movie-title">${title}</h3>
-                    <p class="movie-description">${description}</p>
-                    ${link ? 
-                        `<a class="movie-link" href="${link}" target="_blank" rel="noopener noreferrer">자세히 보기</a>` : 
-                        `<span class="movie-link" style="background: #cbd5e0; color: #718096; cursor: not-allowed;">링크 없음</span>`
-                    }
-                    <button class="delete-btn" onclick="deleteMovie(this)">🗑️</button>
-                </div>
-            `;
-
-            // Add to movie list
-            movieList.appendChild(movieItem);
-
-            // Clear form and draft
-            document.getElementById('movieTitle').value = '';
-            document.getElementById('movieEmoji').value = '';
-            document.getElementById('movieDescription').value = '';
-            document.getElementById('movieLink').value = '';
-            localStorage.removeItem('movieDraft');
-
-            // Save to localStorage
-            saveMoviesToStorage();
-
-            // Show success message
-            showNotification('영화가 성공적으로 추가되었습니다! 🎉');
-
-            // Add hover effects to new movie item
-            addMovieHoverEffects(movieItem);
-        }
-
-        // Movie card interactions (existing functionality)
-        document.querySelectorAll('.movie-item').forEach(card => {
-            addMovieHoverEffects(card);
-        });
-
-        // Recipe card interactions
-        document.querySelectorAll('.recipe-card').forEach(card => {
-            card.addEventListener('click', function() {
-                this.style.transform = this.style.transform ? '' : 'scale(1.02)';
-                this.style.boxShadow = this.style.boxShadow ? '' : '0 8px 15px rgba(0, 0, 0, 0.1)';
-            });
-        });
-
-        // Book rating interactions
-        document.querySelectorAll('.book-card').forEach(card => {
-            card.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-5px)';
-                this.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.1)';
-            });
-            
-            card.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0)';
-                this.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.05)';
-            });
-        });
-
-        // Fitness stats animation
-        function animateCounters() {
-            const counters = document.querySelectorAll('.fitness-value');
-            
-            counters.forEach(counter => {
-                const target = parseInt(counter.textContent.replace(/[^\d]/g, ''));
-                const increment = target / 50;
-                let current = 0;
-                
-                const timer = setInterval(() => {
-                    current += increment;
-                    if (current >= target) {
-                        counter.textContent = counter.textContent; // Keep original format
-                        clearInterval(timer);
-                    } else {
-                        if (counter.textContent.includes('%')) {
-                            counter.textContent = Math.ceil(current) + '%';
-                        } else if (counter.textContent.includes('.')) {
-                            counter.textContent = (current / 10).toFixed(1);
-                        } else {
-                            counter.textContent = Math.ceil(current).toLocaleString();
-                        }
-                    }
-                }, 30);
+            lazyElements.forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                lazyObserver.observe(el);
             });
         }
-
-        // Trigger counter animation when fitness section becomes active
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting && entry.target.id === 'fitness') {
-                    animateCounters();
-                }
-            });
-        });
-
-        observer.observe(document.getElementById('fitness'));
-
-        // Travel card hover effects
-        document.querySelectorAll('.travel-card').forEach(card => {
-            card.addEventListener('mouseenter', function() {
-                const image = this.querySelector('.travel-image');
-                image.style.transform = 'scale(1.05)';
-                image.style.transition = 'transform 0.3s ease';
-            });
-            
-            card.addEventListener('mouseleave', function() {
-                const image = this.querySelector('.travel-image');
-                image.style.transform = 'scale(1)';
-            });
-        });
-
-        // Recipe card interactions
-        document.querySelectorAll('.recipe-card').forEach(card => {
-            card.addEventListener('click', function() {
-                this.style.transform = this.style.transform ? '' : 'scale(1.02)';
-                this.style.boxShadow = this.style.boxShadow ? '' : '0 8px 15px rgba(0, 0, 0, 0.1)';
-            });
-        });
-
-        // Book rating interactions
-        document.querySelectorAll('.book-card').forEach(card => {
-            card.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-5px)';
-                this.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.1)';
-            });
-            
-            card.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0)';
-                this.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.05)';
-            });
-        });
-
-        // Fitness stats animation
-        function animateCounters() {
-            const counters = document.querySelectorAll('.fitness-value');
-            
-            counters.forEach(counter => {
-                const target = parseInt(counter.textContent.replace(/[^\d]/g, ''));
-                const increment = target / 50;
-                let current = 0;
-                
-                const timer = setInterval(() => {
-                    current += increment;
-                    if (current >= target) {
-                        counter.textContent = counter.textContent; // Keep original format
-                        clearInterval(timer);
-                    } else {
-                        if (counter.textContent.includes('%')) {
-                            counter.textContent = Math.ceil(current) + '%';
-                        } else if (counter.textContent.includes('.')) {
-                            counter.textContent = (current / 10).toFixed(1);
-                        } else {
-                            counter.textContent = Math.ceil(current).toLocaleString();
-                        }
-                    }
-                }, 30);
-            });
-        }
-
-        // Trigger counter animation when fitness section becomes active
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting && entry.target.id === 'fitness') {
-                    animateCounters();
-                }
-            });
-        });
-
-        observer.observe(document.getElementById('fitness'));
     </script>
 </body>
 </html>
